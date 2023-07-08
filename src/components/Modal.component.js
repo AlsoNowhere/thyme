@@ -1,48 +1,37 @@
+import { component, element, getter, refresh } from "mint";
 
-import { dill } from "dill";
-
-export const closeModal = (scope, property = "state") => {
-
-    scope[property] = "visible closing";
-
-    !!scope._dillContext && dill.change(scope);
-
-    setTimeout(() => {
-        scope[property] = "";
-
-        !!scope._dillContext && dill.change(scope);
-    }, 300);
-
-    return false;
-}
-
-export const Modal = function(){
-
-    // this.oninserted = function(){
-        // console.log("PreOIS: ", this._template, this);
-        // this.template = this._template.children;
-    // }
-
-    // this.template = null;
-
+export const Modal = component(
+  "article",
+  function ModalComponent() {
+    this.type = "standard";
+    this.header = undefined;
+    this.theme = "";
+    this.active = false;
     this.state = "";
-    this.label = "";
 
-    this.closeModal = function(){
-        closeModal(this);
-    }
+    getter(this, "hasHeader", function () {
+      return this.header !== undefined;
+    });
 
-    return dill(
-        <article class="modal {state}">
-            <div class="content">
-                <header>
-                    <h3>{label}</h3>
-
-                    <button type="button" click--="closeModal"></button>
-                </header>
-
-                <div dill-template="_template"></div>
-            </div>
-        </article>
-    )
-}
+    this.oneach = function () {
+      if (!!this.active && this.state === "") {
+        this.state = "open";
+      } else if (!this.active && this.state === "open") {
+        this.state = "open closing";
+        setTimeout(() => {
+          this.state = "";
+          refresh(this);
+        }, 500);
+      }
+    };
+  },
+  { class: "modal modal--{type} {state}" },
+  element("div", { class: "modal__content" }, [
+    element(
+      "header",
+      { "m-if": "hasHeader", class: "modal__header {theme}" },
+      "{header}"
+    ),
+    "_children",
+  ])
+);

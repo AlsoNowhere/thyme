@@ -1,161 +1,117 @@
+import { component, element, getter } from "mint";
 
-// import { logger } from "sage";
+const common = {
+  "[type]": "type",
+  "[name]": "name",
+  "[class]": "class",
+  "[value]": "value",
+  "[data-id]": "dataId",
+  "[required]": "required",
+};
 
-import { dill } from "dill";
+const fProps = {
+  ...common,
+  "(input)": "onInput",
+  "m-ref": "ref",
+};
 
-// import { SelectOption } from "thyme-core";
+const passProps = {
+  ...common,
+  "[label]": "label",
+  "[fieldStyles]": "fieldStyles",
+  "[onInput]": "onInput",
+  "[ref]": "ref",
+};
 
-// import { DropdownItem } from "../models/DropdownItem.model";
+const Input = component("label", function () {}, { "[style]": "fieldStyles" }, [
+  element("span", null, "{label}"),
+  element("input", { ...fProps }),
+]);
 
-// const locationForLogger = ["ThymeX", "Field component"];
+const Checkbox = component(
+  "label",
+  function () {},
+  { "[style]": "fieldStyles" },
+  [element("input", { ...fProps }), element("span", null, "{label}")]
+);
 
-export const Field = function(){
+const Radio = component("label", function () {}, { "[style]": "fieldStyles" }, [
+  element("input", { ...fProps }),
+  element("span", null, "{label}"),
+]);
 
-    this.oninserted = function(){
+const Select = component(
+  "label",
+  function () {},
+  { "[style]": "fieldStyles" },
+  [element("span", null, "{label}"), element("select", { ...fProps })]
+);
 
-    //     if (typeof this.label !== "string") {
-    //         logger.error(...locationForLogger,"label",`Label property must be a string. You have passed ${typeof this.label}`);
-    //     }
+const Textarea = component(
+  "label",
+  function () {},
+  { "[style]": "fieldStyles" },
+  [element("span", null, "{label}"), element("textarea", { ...fProps })]
+);
 
-    //     if (this.type !== undefined && typeof this.type !== "string") {
-    //         logger.error(...locationForLogger,"type",`Type property must be a string. You have passed ${typeof this.type}`);
-    //     }
-
-    //     if (typeof (this.name instanceof Function ? this.name() : this.name) !== "string") {
-    //         logger.error(...locationForLogger,"name",`Name property must be a string. You have passed ${typeof (this.name instanceof Function ? this.name() : this.name)}`);
-    //     }
-
-    //     if (this.placeholder !== undefined && typeof this.placeholder !== "string") {
-    //         logger.error(...locationForLogger,"placeholder",`Placeholder property must be a string. You have passed ${typeof this.placeholder}`);
-    //     }
-
-    //     if (this.type === "select"){
-
-    //         const options = this.options instanceof Function ? this.options() : this.options;
-
-    //         if (!(options instanceof Array)) {
-    //             logger.error(...locationForLogger,"options","You must pass an Array of options to the options property when defining a select Field.")
-    //         }
-
-    //         this.options = options.filter(x => x instanceof SelectOption || x instanceof DropdownItem);
-
-    //         if (this.options.length < options.length) {
-    //             logger.warn(...locationForLogger,"options",`${options.length - this.options.length} items were filtered out of the options property for not being an instance of SelectOption or DropdownItem.`);
-    //         }
-
-    //         const value = this.value();
-    //         const index = this.options.findIndex(x => x.value === value);
-    //         if (index !== -1 && index !== this.selectedIndex) {
-    //             this.selectedIndex = index;
-    //         }
-    //     }
-    }
-
-    // this.label = "";
+export const Field = component(
+  "div",
+  function FieldComponent() {
     this.type = "text";
-    this.value = "";
-    // this.selectedIndex = 0;
-    // this.required = false;
-    // this.style = "";
-
-    // this.marginBottom = true;
-
-    this.disabled = false;
+    this.class = undefined;
+    this.value = null;
+    this.dataId = undefined;
+    this.fieldStyles = undefined;
     this.required = false;
-    this.styles = "";
-    this.labelClasses = function(){
-        return this.required || this.attributes.required ? "required" : "";
-    }
+    this.onInput = null;
+    this.ref = null;
 
-    this.attributes = {
-        // "name-": "name",
-        // "value-": "value",
-        // "placeholder-": "placeholder",
-        // "input--": "onChange",
-        // "required-": "required",
-        // "style-": "style"
-    }
-    // this.placeholder && this.fieldProperties["placeholder-"] = this.placeholder;
+    getter(this, "isInput", function () {
+      const inValidTypes = ["textarea", "select", "checkbox", "radio"];
+      return !inValidTypes.includes(this.type);
+    });
 
-    this._onChange = function(_, element){
-        if (this.hasOwnProperty("onChange")) {
-            return this.onChange(
-                (this.type === "checkbox" || this.type === "radio")
-                    ? element.checked
-                    : element.value
-                );
-        }
-        else {
-            this.value = element.value;
-        }
-    }
+    getter(this, "isCheckbox", function () {
+      return this.type === "checkbox";
+    });
 
-    // this.isSelected = function(){
-    //     return this._index === this.selectedIndex;
-    // }
+    getter(this, "isRadio", function () {
+      return this.type === "radio";
+    });
 
-    this.hasLabel = function(){
-        return !!this.label;
-    }
-    // this.noMarginBottom = function(){
-    //     return this.marginBottom ? "" : "reset-margin";
-    // }
-    this.labelRequired = function(){
-        return this.required ? "required" : "";
-    }
+    getter(this, "isSelect", function () {
+      return this.type === "select";
+    });
 
-    this.isInput = function(){
-        return this.type !== "select" && this.type !== "textarea";
-    }
-    this.isSelect = function(){
-        return this.type === "select";
-    }
-    this.isTextarea = function(){
-        return this.type === "textarea";
-    }
-    this.isNotRadioOrCheckbox = function(){
-        return this.hasLabel() && this.type !== "checkbox" && this.type !== "radio";
-    }
-    this.isRadioOrCheckbox = function(){
-        return this.hasLabel() && (this.type === "checkbox" || this.type === "radio");
-    }
+    getter(this, "isTextArea", function () {
+      return this.type === "textarea";
+    });
+  },
+  { class: "relative" },
+  [
+    element(Input, {
+      "m-if": "isInput",
+      ...passProps,
+    }),
 
-    return dill(
-        <label class-="labelClasses">
-            <span class="{labelRequired}" dill-if="isNotRadioOrCheckbox">{label}</span>
+    element(Checkbox, {
+      "m-if": "isCheckbox",
+      ...passProps,
+    }),
 
-            <input type-="type"
-                name-="name"
-                value-="value"
-                checked-="checked"
-                input--="_onChange"
-                disabled-="disabled"
-                required-="required"
-                style-="styles"
-                dill-extends="attributes"
-                dill-if="isInput" />
+    element(Radio, {
+      "m-if": "isRadio",
+      ...passProps,
+    }),
 
-        <span class="{labelRequired}" dill-if="isRadioOrCheckbox">{label}</span>
+    element(Select, {
+      "m-if": "isSelect",
+      ...passProps,
+    }),
 
-            <select name-="name"
-                value-="value"
-                input--="_onChange"
-                disabled-="disabled"
-                required-="required"
-                style-="styles"
-                dill-if="isSelect">
-                <option value-="value"
-                    dill-for="options">{name}</option>
-            </select>
-
-            <textarea name-="name"
-                value-="value"
-                input--="_onChange"
-                disabled-="disabled"
-                required-="required"
-                style-="styles"
-                dill-extends="attributes"
-                dill-if="isTextarea"></textarea>
-        </label>
-    )
-}
+    element(Textarea, {
+      "m-if": "isTextArea",
+      ...passProps,
+    }),
+  ]
+);

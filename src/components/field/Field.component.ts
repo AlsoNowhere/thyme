@@ -1,4 +1,4 @@
-import { MintComponent, MintEvent, component, element, getter } from "mint";
+import { MintScope, MintEvent, component, node, Resolver, mIf } from "mint";
 
 import { FieldInput, TFieldInput } from "./FieldInput.component";
 import { FieldCheckbox, TFieldCheckbox } from "./FieldCheckbox.component";
@@ -27,10 +27,12 @@ const passProps: TFieldInput &
   "[labelBeside]": "labelBeside",
   "[labelClass]": "labelClass",
   "[labelStyles]": "labelStyles",
-  "[class]": "inputClass",
+  "[class]": "class",
+  "[large]": "large",
   "[fieldStyles]": "fieldStyles",
   "[required]": "required",
   "[readonly]": "readonly",
+  "[id]": "id",
   "[onInput]": "onInput",
   "[ref]": "ref",
 };
@@ -49,15 +51,16 @@ export type TField = {
   labelStyles?: string;
   placeholder?: string;
   class?: string;
+  large?: boolean;
   wrapperClasses?: string;
   fieldStyles?: string;
   required?: true;
   readonly?: true;
+  id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
   onInput?: MintEvent<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;
-  ref?: string;
 } & {
   "[type]"?: string;
   "[name]"?: string;
@@ -70,15 +73,18 @@ export type TField = {
   "[labelStyles]"?: string;
   "[placeholder]"?: string;
   "[class]"?: string;
+  "[large]"?: string;
   "[wrapperClasses]"?: string;
   "[fieldStyles]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
+  "[id]"?: string;
   "[options]"?: string;
   "[onInput]"?: string;
+  "[ref]"?: string;
 };
 
-class FieldComponent extends MintComponent {
+class FieldComponent extends MintScope {
   type?: TTypes;
   name: string;
   value?: string | number;
@@ -86,12 +92,21 @@ class FieldComponent extends MintComponent {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
+  large?: boolean;
   fieldStyles?: string;
   required?: true;
   readonly?: true;
+  id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
   onInput?: MintEvent | null;
   ref?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+
+  isInput: Resolver<boolean>;
+  isCheckbox: Resolver<boolean>;
+  isRadio: Resolver<boolean>;
+  isFieldSet: Resolver<boolean>;
+  isSelect: Resolver<boolean>;
+  isTextarea: Resolver<boolean>;
 
   constructor() {
     super();
@@ -102,7 +117,7 @@ class FieldComponent extends MintComponent {
     this.onInput = null;
     this.ref = null;
 
-    getter(this, "isInput", function () {
+    this.isInput = new Resolver(function () {
       const inValidTypes = [
         "textarea",
         "select",
@@ -113,23 +128,23 @@ class FieldComponent extends MintComponent {
       return !inValidTypes.includes(this.type);
     });
 
-    getter(this, "isCheckbox", function () {
+    this.isCheckbox = new Resolver(function () {
       return this.type === "checkbox";
     });
 
-    getter(this, "isRadio", function () {
+    this.isRadio = new Resolver(function () {
       return this.type === "radio";
     });
 
-    getter(this, "isFieldSet", function () {
+    this.isFieldSet = new Resolver(function () {
       return this.type === "fieldset";
     });
 
-    getter(this, "isSelect", function () {
+    this.isSelect = new Resolver(function () {
       return this.type === "select";
     });
 
-    getter(this, "isTextarea", function () {
+    this.isTextarea = new Resolver(function () {
       return this.type === "textarea";
     });
   }
@@ -140,35 +155,35 @@ export const Field = component(
   FieldComponent,
   { "[class]": "wrapperClasses" },
   [
-    element<TFieldInput>(FieldInput, {
-      mIf: "isInput",
+    node<TFieldInput>(FieldInput, {
+      mIf: mIf("isInput"),
       ...passProps,
     }),
 
-    element<TFieldInput>(FieldCheckbox, {
-      mIf: "isCheckbox",
+    node<TFieldCheckbox>(FieldCheckbox, {
+      mIf: mIf("isCheckbox"),
       ...passProps,
     }),
 
-    element<TFieldInput>(FieldRadio, {
-      mIf: "isRadio",
+    node<TFieldInput>(FieldRadio, {
+      mIf: mIf("isRadio"),
       ...passProps,
     }),
 
-    element(FieldFieldset, {
-      mIf: "isFieldSet",
+    node(FieldFieldset, {
+      mIf: mIf("isFieldSet"),
       ...passProps,
       "[options]": "options",
     }),
 
-    element<TFieldTextarea>(FieldTextarea, {
-      mIf: "isTextarea",
+    node<TFieldTextarea>(FieldTextarea, {
+      mIf: mIf("isTextarea"),
       ...passProps,
       "[resize]": "resize",
     }),
 
-    element<TFieldSelect>(FieldSelect, {
-      mIf: "isSelect",
+    node<TFieldSelect>(FieldSelect, {
+      mIf: mIf("isSelect"),
       ...passProps,
       "[options]": "options",
     }),

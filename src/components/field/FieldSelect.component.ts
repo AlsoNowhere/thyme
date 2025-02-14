@@ -1,4 +1,13 @@
-import { MintComponent, MintEvent, component, element, getter } from "mint";
+import {
+  MintScope,
+  MintEvent,
+  component,
+  node,
+  Resolver,
+  mIf,
+  mFor,
+  mRef,
+} from "mint";
 
 import { IFieldOption } from "../../interfaces/IFieldOption.interface";
 
@@ -12,6 +21,7 @@ export type TFieldSelect = {
   fieldStyles?: string;
   required?: true;
   readonly?: true;
+  id?: string;
   options?: Array<IFieldOption>;
   onInput?: MintEvent;
 } & {
@@ -24,20 +34,25 @@ export type TFieldSelect = {
   "[fieldStyles]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
+  "[id]"?: string;
   "[options]"?: string;
   "[onInput]"?: string;
   "[ref]"?: string;
 };
 
-class FieldSelectComponent extends MintComponent {
+class FieldSelectComponent extends MintScope {
   type: string;
   name: string;
   label?: string;
   class: string;
   fieldStyles?: string;
+  required?: true;
+  readonly?: string;
+  id?: string;
   options: Array<IFieldOption>;
-  required: boolean;
   onInput: MintEvent | null;
+
+  hasLabel: Resolver<boolean>;
 
   constructor() {
     super();
@@ -46,7 +61,7 @@ class FieldSelectComponent extends MintComponent {
     this.options = [];
     this.onInput = null;
 
-    getter(this, "hasLabel", function () {
+    this.hasLabel = new Resolver(function () {
       return !!this.label;
     });
   }
@@ -57,8 +72,8 @@ export const FieldSelect = component(
   FieldSelectComponent,
   { class: "{labelClass} {isRequired}" },
   [
-    element("span", { mIf: "hasLabel" }, "{label}"),
-    element(
+    node("span", { mIf: mIf("hasLabel") }, "{label}"),
+    node(
       "select",
       {
         "[name]": "name",
@@ -66,14 +81,16 @@ export const FieldSelect = component(
         "[class]": "class",
         "[style]": "fieldStyles",
         "[required]": "required",
+        "[readonly]": "readonly",
+        "[id]": "id",
         "(input)": "onInput",
-        mRef: "ref",
+        mRef: mRef("ref"),
       },
       [
-        element(
+        node(
           "option",
           {
-            mFor: "options",
+            mFor: mFor("options"),
             mKey: "value",
             "[value]": "value",
           },

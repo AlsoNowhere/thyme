@@ -1,4 +1,12 @@
-import { MintComponent, MintEvent, component, element, getter } from "mint";
+import {
+  MintScope,
+  MintEvent,
+  component,
+  node,
+  Resolver,
+  mIf,
+  mRef,
+} from "mint";
 
 export type TFieldTextarea = {
   name?: string;
@@ -12,6 +20,7 @@ export type TFieldTextarea = {
   required?: true;
   readonly?: true;
   resize?: true;
+  id?: string;
   onInput?: MintEvent;
 } & {
   "[name]"?: string;
@@ -25,11 +34,12 @@ export type TFieldTextarea = {
   "[required]"?: string;
   "[readonly]"?: string;
   "[resize]"?: string;
+  "[id]"?: string;
   "[onInput]"?: string;
   "[ref]"?: string;
 };
 
-class FieldTextareaComponent extends MintComponent {
+class FieldTextareaComponent extends MintScope {
   name: string;
   label?: string;
   value: string;
@@ -40,7 +50,12 @@ class FieldTextareaComponent extends MintComponent {
   required: boolean;
   readonly?: true;
   resize?: boolean;
+  id?: string;
   onInput: MintEvent | null;
+
+  hasLabel: Resolver<boolean>;
+  getStyles: Resolver<string>;
+  getReadonly: Resolver<string | undefined>;
 
   constructor() {
     super();
@@ -49,15 +64,15 @@ class FieldTextareaComponent extends MintComponent {
     this.fieldStyles = "";
     this.onInput = null;
 
-    getter(this, "hasLabel", function () {
+    this.hasLabel = new Resolver(function () {
       return !!this.label;
     });
 
-    getter(this, "getStyles", function () {
+    this.getStyles = new Resolver(function () {
       return this.resize ? "" : "resize: none;" + this.fieldStyles;
     });
 
-    getter(this, "getReadonly", function () {
+    this.getReadonly = new Resolver(function () {
       return this.readonly ? "true" : undefined;
     });
   }
@@ -68,16 +83,17 @@ export const FieldTextarea = component(
   FieldTextareaComponent,
   { class: "{labelClass} {isRequired}" },
   [
-    element("span", { mIf: "hasLabel" }, "{label}"),
-    element("textarea", {
+    node("span", { mIf: mIf("hasLabel") }, "{label}"),
+    node("textarea", {
       "[name]": "name",
       "[value]": "value",
       "[class]": "class",
       "[placeholder]": "placeholder",
       "[style]": "getStyles",
       "[readonly]": "getReadonly",
+      "[id]": "id",
       "(input)": "onInput",
-      mRef: "ref",
+      mRef: mRef("ref"),
     }),
   ]
 );

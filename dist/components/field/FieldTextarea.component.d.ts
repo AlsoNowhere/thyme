@@ -1,0 +1,32 @@
+import { MintEvent } from "mint";
+export type TFieldTextarea = {
+    name?: string;
+    value?: string | number;
+    label?: string;
+    labelClass?: string;
+    labelStyles?: string;
+    class?: string;
+    fieldStyles?: string;
+    placeholder?: string;
+    required?: true;
+    readonly?: true;
+    resize?: true;
+    id?: string;
+    onInput?: MintEvent;
+} & {
+    "[name]"?: string;
+    "[value]"?: string;
+    "[label]"?: string;
+    "[labelClass]"?: string;
+    "[labelStyles]"?: string;
+    "[class]"?: string;
+    "[fieldStyles]"?: string;
+    "[placeholder]"?: string;
+    "[required]"?: string;
+    "[readonly]"?: string;
+    "[resize]"?: string;
+    "[id]"?: string;
+    "[onInput]"?: string;
+    "[ref]"?: string;
+};
+export declare const FieldTextarea: import("mint").MintComponent;

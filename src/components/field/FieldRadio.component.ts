@@ -1,4 +1,4 @@
-import { component, element } from "mint";
+import { component, node } from "mint";
 
 import { FieldInput } from "./FieldInput.component";
 
@@ -6,7 +6,7 @@ export const FieldRadio = component(
   "div",
   null,
   null,
-  element(FieldInput, {
+  node(FieldInput, {
     type: "radio",
     "[name]": "name",
     "[value]": "value",

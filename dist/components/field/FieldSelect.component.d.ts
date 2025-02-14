@@ -1,0 +1,31 @@
+import { MintEvent } from "mint";
+import { IFieldOption } from "../../interfaces/IFieldOption.interface";
+export type TFieldSelect = {
+    name?: string;
+    value?: string | number;
+    label?: string;
+    labelClass?: string;
+    labelStyles?: string;
+    class?: string;
+    fieldStyles?: string;
+    required?: true;
+    readonly?: true;
+    id?: string;
+    options?: Array<IFieldOption>;
+    onInput?: MintEvent;
+} & {
+    "[name]"?: string;
+    "[value]"?: string;
+    "[label]"?: string;
+    "[labelClass]"?: string;
+    "[labelStyles]"?: string;
+    "[class]"?: string;
+    "[fieldStyles]"?: string;
+    "[required]"?: string;
+    "[readonly]"?: string;
+    "[id]"?: string;
+    "[options]"?: string;
+    "[onInput]"?: string;
+    "[ref]"?: string;
+};
+export declare const FieldSelect: import("mint").MintComponent;

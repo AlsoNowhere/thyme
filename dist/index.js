@@ -1,83 +1,96 @@
-import { component, element, template, MintComponent, getter, refresh, Store } from 'mint';
+import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, refresh, Store } from 'mint';
 
-class ButtonComponent extends MintComponent {
+class ButtonComponent extends MintScope {
     constructor() {
         super();
         this.type = "button";
         this.theme = "snow";
         this.class = "";
+        this.style = undefined;
+        this.id = undefined;
         this.onClick = null;
-        getter(this, "classes", function () {
+        this.classes = new Resolver(function () {
             if (this.hasExtraButtonLabel)
                 return `${this.class} multi-content`;
             return this.class;
         });
-        getter(this, "hasIcon", function () {
+        this.hasIcon = new Resolver(function () {
             return this.icon !== undefined;
         });
-        getter(this, "hasLabel", function () {
+        this.hasLabel = new Resolver(function () {
             return this.label !== undefined;
         });
-        getter(this, "isSquare", function () {
+        this.isSquare = new Resolver(function () {
             return this.square ? "square" : "";
         });
-        getter(this, "isLarge", function () {
+        this.isLarge = new Resolver(function () {
             return this.large ? "large" : "";
         });
-        getter(this, "hasExtraButtonLabel", function () {
+        this.hasExtraButtonLabel = new Resolver(function () {
             return (this.extraButtonLabel !== null && this.extraButtonLabel !== undefined);
         });
-        getter(this, "getExtraButtonLabel", function () {
-            return this.extraButtonLabel();
-        });
+        this.getExtraButtonLabel = function () {
+            return this.extraButtonLabel;
+        };
     }
 }
 const Button = component("button", ButtonComponent, {
     "[type]": "type",
     class: "{theme} {classes} {isSquare} {isLarge}",
+    "[style]": "style",
     "[title]": "title",
+    "[id]": "id",
     "(click)": "onClick",
+    mRef: mRef("ref"),
 }, [
-    element("span", { mIf: "hasIcon", class: "icon fa fa-{icon}" }),
-    element("span", { mIf: "hasLabel", class: "label" }, "{label}"),
-    element("span", { mIf: "hasExtraButtonLabel", class: "extra-content" }, template("getExtraButtonLabel")),
+    node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
+    node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
+    node("span", { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" }, node(template("getExtraButtonLabel"))),
 ]);
 
-class FieldInputComponent extends MintComponent {
+class FieldInputComponent extends MintScope {
     constructor() {
         super();
         this.type = "text";
         this.fieldStyles = "";
         this.onInput = null;
-        getter(this, "isRequired", function () {
+        this._labelClass = new Resolver(function () {
+            return this.labelClass + (this.large ? " large" : "");
+        });
+        this._inputClass = new Resolver(function () {
+            return this.class + (this.large ? " large" : "");
+        });
+        this.isRequired = new Resolver(function () {
             return this.required ? "required" : "";
         });
-        getter(this, "hasLabelAbove", function () {
+        this.hasLabelAbove = new Resolver(function () {
             return !!this.label && !this.labelBeside;
         });
-        getter(this, "hasLabelBeside", function () {
+        this.hasLabelBeside = new Resolver(function () {
             return !!this.label && !!this.labelBeside;
         });
     }
 }
-const FieldInput = component("label", FieldInputComponent, { class: "{labelClass} {isRequired}", "[style]": "labelStyles" }, [
-    element("span", { mIf: "hasLabelAbove" }, "{label}"),
-    element("input", {
+const FieldInput = component("label", FieldInputComponent, { class: "{_labelClass} {isRequired}", "[style]": "labelStyles" }, [
+    node("span", { mIf: mIf("hasLabelAbove") }, "{label}"),
+    node("input", {
         "[type]": "type",
         "[name]": "name",
         "[value]": "value",
         "[checked]": "checked",
-        "[class]": "class",
+        "[class]": "_inputClass",
         "[placeholder]": "placeholder",
         "[required]": "required",
+        "[readonly]": "readonly",
         "[style]": "fieldStyles",
+        "[id]": "id",
         "(input)": "onInput",
-        mRef: "ref",
+        mRef: mRef("ref"),
     }),
-    element("span", { mIf: "hasLabelBeside" }, "{label}"),
+    node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
 ]);
 
-const FieldCheckbox = component("div", null, null, element(FieldInput, {
+const FieldCheckbox = component("div", null, null, node(FieldInput, {
     type: "checkbox",
     "[name]": "name",
     "[value]": "value",
@@ -86,14 +99,16 @@ const FieldCheckbox = component("div", null, null, element(FieldInput, {
     labelBeside: true,
     "[labelClass]": "labelClass",
     "[class]": "inputClass",
+    "[large]": "large",
     "[fieldStyles]": "fieldStyles",
     "[required]": "required",
     "[readonly]": "readonly",
+    "[id]": "id",
     "[onInput]": "onInput",
     "[ref]": "ref",
 }));
 
-const FieldRadio = component("div", null, null, element(FieldInput, {
+const FieldRadio = component("div", null, null, node(FieldInput, {
     type: "radio",
     "[name]": "name",
     "[value]": "value",
@@ -110,88 +125,95 @@ const FieldRadio = component("div", null, null, element(FieldInput, {
     "[ref]": "ref",
 }));
 
-class FieldSelectComponent extends MintComponent {
+class FieldSelectComponent extends MintScope {
     constructor() {
         super();
         this.fieldStyles = "";
         this.options = [];
         this.onInput = null;
-        getter(this, "hasLabel", function () {
+        this.hasLabel = new Resolver(function () {
             return !!this.label;
         });
     }
 }
 const FieldSelect = component("label", FieldSelectComponent, { class: "{labelClass} {isRequired}" }, [
-    element("span", { mIf: "hasLabel" }, "{label}"),
-    element("select", {
+    node("span", { mIf: mIf("hasLabel") }, "{label}"),
+    node("select", {
         "[name]": "name",
         "[value]": "value",
         "[class]": "class",
         "[style]": "fieldStyles",
         "[required]": "required",
+        "[readonly]": "readonly",
+        "[id]": "id",
         "(input)": "onInput",
-        mRef: "ref",
+        mRef: mRef("ref"),
     }, [
-        element("option", {
-            mFor: "options",
+        node("option", {
+            mFor: mFor("options"),
             mKey: "value",
             "[value]": "value",
         }, "{name}"),
     ]),
 ]);
 
-class FieldFieldsetComponent extends MintComponent {
+class FieldFieldsetComponent extends MintScope {
     constructor() {
         super();
+        this.legend = "";
+        this.value = null;
         this.options = [];
-        this.onInput = null;
-        getter(this, "hasLegend", function () {
-            return !!this.legend;
+        this.isChecked = new Resolver(function () {
+            return this.value === this.fieldValue;
         });
+        this.fieldValue = new Resolver(() => this.value);
+        this.onInput = null;
     }
 }
-const FieldFieldset = component("fieldset", FieldFieldsetComponent, {}, [
-    element("legend", { mIf: "hasLegend", class: "fieldset__legend" }, "{legend}"),
-    element("ul", { class: "list flex" }, element("li", { mFor: "options", mKey: "value", class: "margin-right-small" }, element(FieldRadio, {
+const FieldFieldset = component("fieldset", FieldFieldsetComponent, { "[id]": "id" }, [
+    node("legend", { mIf: mIf("legend"), class: "fieldset__legend" }, "{legend}"),
+    node("ul", { class: "list flex" }, node("li", { mFor: mFor("options"), mKey: "value", class: "margin-right-small" }, node(FieldRadio, {
         "[name]": "name",
         "[value]": "value",
         "[label]": "label",
+        "[class]": "class",
         "[labelClass]": "labelClass",
         "[labelStyles]": "labelStyles",
         "[fieldStyles]": "fieldStyles",
-        "[class]": "class",
+        "[checked]": "isChecked",
         "[onInput]": "onInput",
     }))),
 ]);
 
-class FieldTextareaComponent extends MintComponent {
+class FieldTextareaComponent extends MintScope {
     constructor() {
         super();
         this.resize = false;
         this.fieldStyles = "";
         this.onInput = null;
-        getter(this, "hasLabel", function () {
+        this.hasLabel = new Resolver(function () {
             return !!this.label;
         });
-        getter(this, "getStyles", function () {
+        this.getStyles = new Resolver(function () {
             return this.resize ? "" : "resize: none;" + this.fieldStyles;
         });
-        getter(this, "getReadonly", function () {
+        this.getReadonly = new Resolver(function () {
             return this.readonly ? "true" : undefined;
         });
     }
 }
 const FieldTextarea = component("label", FieldTextareaComponent, { class: "{labelClass} {isRequired}" }, [
-    element("span", { mIf: "hasLabel" }, "{label}"),
-    element("textarea", {
+    node("span", { mIf: mIf("hasLabel") }, "{label}"),
+    node("textarea", {
         "[name]": "name",
         "[value]": "value",
         "[class]": "class",
         "[placeholder]": "placeholder",
         "[style]": "getStyles",
         "[readonly]": "getReadonly",
+        "[id]": "id",
         "(input)": "onInput",
-        mRef: "ref",
+        mRef: mRef("ref"),
     }),
 ]);
 
@@ -205,14 +227,16 @@ const passProps = {
     "[labelBeside]": "labelBeside",
     "[labelClass]": "labelClass",
     "[labelStyles]": "labelStyles",
-    "[class]": "inputClass",
+    "[class]": "class",
+    "[large]": "large",
     "[fieldStyles]": "fieldStyles",
     "[required]": "required",
     "[readonly]": "readonly",
+    "[id]": "id",
     "[onInput]": "onInput",
     "[ref]": "ref",
 };
-class FieldComponent extends MintComponent {
+class FieldComponent extends MintScope {
     constructor() {
         super();
         this.type = "text";
@@ -220,7 +244,7 @@ class FieldComponent extends MintComponent {
         this.fieldStyles = undefined;
         this.onInput = null;
         this.ref = null;
-        getter(this, "isInput", function () {
+        this.isInput = new Resolver(function () {
             const inValidTypes = [
                 "textarea",
                 "select",
@@ -230,30 +254,30 @@ class FieldComponent extends MintComponent {
             ];
             return !inValidTypes.includes(this.type);
         });
-        getter(this, "isCheckbox", function () {
+        this.isCheckbox = new Resolver(function () {
             return this.type === "checkbox";
         });
-        getter(this, "isRadio", function () {
+        this.isRadio = new Resolver(function () {
             return this.type === "radio";
         });
-        getter(this, "isFieldSet", function () {
+        this.isFieldSet = new Resolver(function () {
             return this.type === "fieldset";
         });
-        getter(this, "isSelect", function () {
+        this.isSelect = new Resolver(function () {
             return this.type === "select";
         });
-        getter(this, "isTextarea", function () {
+        this.isTextarea = new Resolver(function () {
             return this.type === "textarea";
         });
     }
 }
 const Field = component("div", FieldComponent, { "[class]": "wrapperClasses" }, [
-    element(FieldInput, Object.assign({ mIf: "isInput" }, passProps)),
-    element(FieldCheckbox, Object.assign({ mIf: "isCheckbox" }, passProps)),
-    element(FieldRadio, Object.assign({ mIf: "isRadio" }, passProps)),
-    element(FieldFieldset, Object.assign(Object.assign({ mIf: "isFieldSet" }, passProps), { "[options]": "options" })),
-    element(FieldTextarea, Object.assign(Object.assign({ mIf: "isTextarea" }, passProps), { "[resize]": "resize" })),
-    element(FieldSelect, Object.assign(Object.assign({ mIf: "isSelect" }, passProps), { "[options]": "options" })),
+    node(FieldInput, Object.assign({ mIf: mIf("isInput") }, passProps)),
+    node(FieldCheckbox, Object.assign({ mIf: mIf("isCheckbox") }, passProps)),
+    node(FieldRadio, Object.assign({ mIf: mIf("isRadio") }, passProps)),
+    node(FieldFieldset, Object.assign(Object.assign({ mIf: mIf("isFieldSet") }, passProps), { "[options]": "options" })),
+    node(FieldTextarea, Object.assign(Object.assign({ mIf: mIf("isTextarea") }, passProps), { "[resize]": "resize" })),
+    node(FieldSelect, Object.assign(Object.assign({ mIf: mIf("isSelect") }, passProps), { "[options]": "options" })),
 ]);
 
 const modalTime = 500;
@@ -267,13 +291,13 @@ const closeModal = (target, prop) => {
     }, modalTime);
 };
 
-class ModalComponent extends MintComponent {
+class ModalComponent extends MintScope {
     constructor() {
         super();
         this.state = "";
         this.theme = "smoke";
         this.class = "";
-        getter(this, "hasTitle", function () {
+        this.hasTitle = new Resolver(function () {
             return this.title !== undefined;
         });
         this.clickOnBackground = function () {
@@ -289,10 +313,131 @@ class ModalComponent extends MintComponent {
         };
     }
 }
-const Modal = component("article", ModalComponent, { class: "modal {state}", "(click)": "clickOnBackground" }, element("div", { class: "modal__content {class}" }, [
-    element("header", { mIf: "hasTitle", class: "modal__header {theme}" }, element("h2", null, "{title}")),
+const Modal = component("article", ModalComponent, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}" }, [
+    node("header", { mIf: mIf("hasTitle"), class: "modal__header {theme}" }, node("h2", null, "{title}")),
     "_children",
 ]));
+
+const exact = (target, hash) => {
+    return target === hash;
+};
+const contains = (target, hash) => {
+    return hash.includes(target);
+};
+const hasWord = (target, hash) => {
+    return (hash.includes(` ${hash} `) ||
+        exact(target, hash) ||
+        starts(target + " ", hash) ||
+        ends(" " + target, hash));
+};
+const containsAndHyphen = (target, hash) => {
+    return target === hash || hash.includes(target + "-");
+};
+const starts = (target, hash) => {
+    return hash.slice(0, target.length) === target;
+};
+const ends = (target, hash) => {
+    return hash.slice(hash.length - target.length) === target;
+};
+
+var RouteType;
+(function (RouteType) {
+    RouteType["exact"] = "exact";
+    RouteType["="] = "=";
+    RouteType["contains"] = "contains";
+    RouteType["*"] = "*";
+    RouteType["hasWord"] = "hasWord";
+    RouteType["~"] = "~";
+    RouteType["containsAndHyphen"] = "containsAndHyphen";
+    RouteType["|"] = "|";
+    RouteType["starts"] = "starts";
+    RouteType["^"] = "^";
+    RouteType["ends"] = "ends";
+    RouteType["$"] = "$";
+})(RouteType || (RouteType = {}));
+
+const logic = {
+    [RouteType.exact]: exact,
+    [RouteType["="]]: exact,
+    [RouteType.contains]: contains,
+    [RouteType["*"]]: contains,
+    [RouteType.hasWord]: hasWord,
+    [RouteType["~"]]: hasWord,
+    [RouteType.containsAndHyphen]: containsAndHyphen,
+    [RouteType["|"]]: containsAndHyphen,
+    [RouteType.starts]: starts,
+    [RouteType["^"]]: starts,
+    [RouteType.ends]: ends,
+    [RouteType["$"]]: ends,
+};
+class RouterComponent extends MintScope {
+    constructor() {
+        super();
+        this.routes = [];
+        this.oninit = function () {
+            var _a;
+            (_a = this.onDefine) === null || _a === void 0 ? void 0 : _a.call(this, this);
+        };
+        this.router = function () {
+            const routes = this.routes;
+            const hash = window.location.hash.replace("#", "").replace(/%20/g, " ");
+            {
+                let i = 0;
+                while (i < routes.length) {
+                    const route = routes[i];
+                    if (logic[route.type](route.target, hash))
+                        return route.content;
+                    i++;
+                }
+            }
+            return [];
+        };
+    }
+}
+const Router = component("<>", RouterComponent, {}, [
+    node(template("router")),
+]);
+
+class TabsComponent extends MintScope {
+    constructor() {
+        super();
+        const scope = this;
+        this.tabs = [];
+        this.currentTab = null;
+        this.currentTemplate = new Resolver(function () {
+            return this.currentTab.template;
+        });
+        this.tabSelected = new Resolver(function () {
+            return this.currentTab !== null;
+        });
+        this.activeTab = new Resolver(function () {
+            return this._x === this.currentTab ? "active" : "";
+        });
+        this.onpreblueprint = function () {
+            if (this.tabs.length === 0)
+                return;
+            if (this.currentTab !== null)
+                return;
+            this.currentTab = this.tabs[0];
+        };
+        this.selectTab = function () {
+            var _a;
+            console.log("Scope: ", scope);
+            scope.currentTab = this._x;
+            (_a = scope.onSelectTab) === null || _a === void 0 ? void 0 : _a.call(scope);
+            refresh(scope);
+        };
+    }
+}
+const Tabs = component("div", TabsComponent, { class: "tabs", mRef: mRef("ref") }, [
+    node("ul", { class: "tabs__list" }, node("li", {
+        mFor: mFor("tabs"),
+        mKey: "name",
+        class: "tabs__list-item {activeTab}",
+        "(click)": "selectTab",
+    }, node("div", null, "{name}"))),
+    node("div", { mIf: mIf("tabSelected"), class: "tabs__body" }, node(template({ onevery: true }, "currentTemplate"))),
+]);
 
 class FieldsetOption {
     constructor({ value, label = value, classes, }) {
@@ -302,4 +447,25 @@ class FieldsetOption {
     }
 }
 
-export { Button, Field, FieldsetOption, Modal, closeModal };
+class Tab {
+    constructor(name, template) {
+        this.name = name;
+        this.template = template;
+    }
+}
+
+class Route {
+    constructor(targetOrOptions, content) {
+        if (typeof targetOrOptions === "string") {
+            this.target = targetOrOptions;
+            this.type = RouteType.exact;
+        }
+        else {
+            this.target = targetOrOptions.target;
+            this.type = targetOrOptions.type;
+        }
+        this.content = content;
+    }
+}
+
+export { Button, Field, FieldsetOption, Modal, Route, RouteType, Router, Tab, Tabs, closeModal };

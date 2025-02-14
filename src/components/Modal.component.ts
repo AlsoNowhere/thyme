@@ -1,10 +1,11 @@
 import {
-  MintComponent,
+  MintScope,
   MintEvent,
   Store,
   component,
-  element,
-  getter,
+  node,
+  Resolver,
+  mIf,
 } from "mint";
 
 import { closeModal } from "../services/close-mdoal.service";
@@ -28,12 +29,14 @@ export type TModal = {
   "[storeTarget]"?: string;
 };
 
-class ModalComponent extends MintComponent {
+class ModalComponent extends MintScope {
   state: TModalState;
   title?: string;
   theme?: TThemes;
   class?: string;
   closeOnBackgroundClick?: true;
+
+  hasTitle: Resolver<boolean>;
 
   clickOnBackground: MintEvent;
 
@@ -44,7 +47,7 @@ class ModalComponent extends MintComponent {
     this.theme = "smoke";
     this.class = "";
 
-    getter(this, "hasTitle", function () {
+    this.hasTitle = new Resolver(function () {
       return this.title !== undefined;
     });
 
@@ -66,11 +69,11 @@ export const Modal = component(
   "article",
   ModalComponent,
   { class: "modal {state}", "(click)": "clickOnBackground" },
-  element("div", { class: "modal__content {class}" }, [
-    element(
+  node("div", { class: "modal__content {class}" }, [
+    node(
       "header",
-      { mIf: "hasTitle", class: "modal__header {theme}" },
-      element("h2", null, "{title}")
+      { mIf: mIf("hasTitle"), class: "modal__header {theme}" },
+      node("h2", null, "{title}")
     ),
     "_children",
   ])

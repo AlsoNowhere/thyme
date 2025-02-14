@@ -1,4 +1,12 @@
-import { MintComponent, MintEvent, component, element, getter } from "mint";
+import {
+  MintScope,
+  MintEvent,
+  component,
+  node,
+  Resolver,
+  mIf,
+  mRef,
+} from "mint";
 
 import { TInputTypes } from "../../types/TInputTypes.type";
 
@@ -12,10 +20,12 @@ export type TFieldInput = {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
+  large?: boolean;
   fieldStyles?: string;
   placeholder?: string;
   required?: true;
   readonly?: true;
+  id?: string;
   onInput?: MintEvent;
 } & {
   "[type]"?: string;
@@ -27,15 +37,17 @@ export type TFieldInput = {
   "[labelClass]"?: string;
   "[labelStyles]"?: string;
   "[class]"?: string;
+  "[large]"?: string;
   "[fieldStyles]"?: string;
   "[placeholder]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
+  "[id]"?: string;
   "[onInput]"?: string;
   "[ref]"?: string;
 };
 
-class FieldInputComponent extends MintComponent {
+class FieldInputComponent extends MintScope {
   type: string;
   name: string;
   value?: string;
@@ -44,10 +56,19 @@ class FieldInputComponent extends MintComponent {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
+  large?: boolean;
   fieldStyles?: string;
   placeholder?: string;
   required?: true;
+  readonly?: string;
+  id?: string;
   onInput: MintEvent | null;
+
+  _labelClass: Resolver<string>;
+  _inputClass: Resolver<string>;
+  isRequired: Resolver<string>;
+  hasLabelAbove: Resolver<boolean>;
+  hasLabelBeside: Resolver<boolean>;
 
   constructor() {
     super();
@@ -56,15 +77,23 @@ class FieldInputComponent extends MintComponent {
     this.fieldStyles = "";
     this.onInput = null;
 
-    getter(this, "isRequired", function () {
+    this._labelClass = new Resolver(function () {
+      return this.labelClass + (this.large ? " large" : "");
+    });
+
+    this._inputClass = new Resolver(function () {
+      return this.class + (this.large ? " large" : "");
+    });
+
+    this.isRequired = new Resolver(function () {
       return this.required ? "required" : "";
     });
 
-    getter(this, "hasLabelAbove", function () {
+    this.hasLabelAbove = new Resolver(function () {
       return !!this.label && !this.labelBeside;
     });
 
-    getter(this, "hasLabelBeside", function () {
+    this.hasLabelBeside = new Resolver(function () {
       return !!this.label && !!this.labelBeside;
     });
   }
@@ -73,21 +102,23 @@ class FieldInputComponent extends MintComponent {
 export const FieldInput = component(
   "label",
   FieldInputComponent,
-  { class: "{labelClass} {isRequired}", "[style]": "labelStyles" },
+  { class: "{_labelClass} {isRequired}", "[style]": "labelStyles" },
   [
-    element("span", { mIf: "hasLabelAbove" }, "{label}"),
-    element("input", {
+    node("span", { mIf: mIf("hasLabelAbove") }, "{label}"),
+    node("input", {
       "[type]": "type",
       "[name]": "name",
       "[value]": "value",
       "[checked]": "checked",
-      "[class]": "class",
+      "[class]": "_inputClass",
       "[placeholder]": "placeholder",
       "[required]": "required",
+      "[readonly]": "readonly",
       "[style]": "fieldStyles",
+      "[id]": "id",
       "(input)": "onInput",
-      mRef: "ref",
+      mRef: mRef("ref"),
     }),
-    element("span", { mIf: "hasLabelBeside" }, "{label}"),
+    node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
   ]
 );

@@ -1,16 +1,57 @@
-import { MintComponent, component, element, getter, template } from "mint";
+import {
+  MintScope,
+  MintEvent,
+  component,
+  node,
+  Resolver,
+  template,
+  mIf,
+  TMintContent,
+  mRef,
+} from "mint";
 
 import { TThemes } from "../types/TThemes.type";
 
-class ButtonComponent extends MintComponent {
+type TTypes = "submit" | "button";
+
+export type TButton = {
+  type?: TTypes;
+  label?: string;
+  theme?: TThemes | "empty";
+  icon?: string;
+  class?: string;
+  style?: string;
+  onClick?: MintEvent<HTMLButtonElement>;
+  ref?: null;
+} & {
+  "[type]"?: string;
+  "[label]"?: string;
+  "[theme]"?: string;
+  "[icon]"?: string;
+  "[class]"?: string;
+  "[style]"?: string;
+  "[onClick]"?: string;
+  "[ref]"?: string;
+};
+
+class ButtonComponent extends MintScope {
   type?: "button" | "submit";
   theme: TThemes;
   icon?: string;
   label?: string;
   title: string;
   class: string;
+  style: string;
+  id?: undefined;
   square?: true;
   large?: true;
+  classes: Resolver<string>;
+  hasIcon: Resolver<boolean>;
+  hasLabel: Resolver<boolean>;
+  isSquare: Resolver<string>;
+  isLarge: Resolver<string>;
+  hasExtraButtonLabel: Resolver<boolean>;
+  getExtraButtonLabel: () => TMintContent;
   extraButtonLabel?: () => string;
   onClick: (() => void) | null;
 
@@ -20,38 +61,40 @@ class ButtonComponent extends MintComponent {
     this.type = "button";
     this.theme = "snow";
     this.class = "";
+    this.style = undefined;
+    this.id = undefined;
     this.onClick = null;
 
-    getter(this, "classes", function () {
+    this.classes = new Resolver(function () {
       if (this.hasExtraButtonLabel) return `${this.class} multi-content`;
       return this.class;
     });
 
-    getter(this, "hasIcon", function () {
+    this.hasIcon = new Resolver(function () {
       return this.icon !== undefined;
     });
 
-    getter(this, "hasLabel", function () {
+    this.hasLabel = new Resolver(function () {
       return this.label !== undefined;
     });
 
-    getter(this, "isSquare", function () {
+    this.isSquare = new Resolver(function () {
       return this.square ? "square" : "";
     });
 
-    getter(this, "isLarge", function () {
+    this.isLarge = new Resolver(function () {
       return this.large ? "large" : "";
     });
 
-    getter(this, "hasExtraButtonLabel", function () {
+    this.hasExtraButtonLabel = new Resolver(function () {
       return (
         this.extraButtonLabel !== null && this.extraButtonLabel !== undefined
       );
     });
 
-    getter(this, "getExtraButtonLabel", function () {
-      return this.extraButtonLabel();
-    });
+    this.getExtraButtonLabel = function () {
+      return this.extraButtonLabel;
+    };
   }
 }
 
@@ -61,16 +104,19 @@ export const Button = component(
   {
     "[type]": "type",
     class: "{theme} {classes} {isSquare} {isLarge}",
+    "[style]": "style",
     "[title]": "title",
+    "[id]": "id",
     "(click)": "onClick",
+    mRef: mRef("ref"),
   },
   [
-    element("span", { mIf: "hasIcon", class: "icon fa fa-{icon}" }),
-    element("span", { mIf: "hasLabel", class: "label" }, "{label}"),
-    element(
+    node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
+    node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
+    node(
       "span",
-      { mIf: "hasExtraButtonLabel", class: "extra-content" },
-      template("getExtraButtonLabel")
+      { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" },
+      node(template("getExtraButtonLabel"))
     ),
   ]
 );

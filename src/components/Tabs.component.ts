@@ -60,7 +60,6 @@ class TabsComponent extends MintScope {
     };
 
     this.selectTab = function () {
-      console.log("Scope: ", scope);
       scope.currentTab = this._x;
       scope.onSelectTab?.();
       refresh(scope);

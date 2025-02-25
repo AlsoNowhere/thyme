@@ -111,12 +111,15 @@ export const Button = component(
     mRef: mRef("ref"),
   },
   [
-    node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
-    node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
-    node(
-      "span",
-      { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" },
-      node(template("getExtraButtonLabel"))
-    ),
+    node("<>", { ...mIf("!_children") }, [
+      node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
+      node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
+      node(
+        "span",
+        { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" },
+        node(template("getExtraButtonLabel"))
+      ),
+    ]),
+    node("<>", { ...mIf("_children") }, "_children"),
   ]
 );

@@ -6,6 +6,7 @@ import {
   Resolver,
   mIf,
   mRef,
+  UpwardRef,
 } from "mint";
 
 export type TFieldTextarea = {
@@ -15,13 +16,14 @@ export type TFieldTextarea = {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
-  fieldStyles?: string;
+  style?: string;
   placeholder?: string;
   required?: true;
   readonly?: true;
   resize?: true;
   id?: string;
   onInput?: MintEvent;
+  ref?: UpwardRef<HTMLTextAreaElement>;
 } & {
   "[name]"?: string;
   "[value]"?: string;
@@ -29,7 +31,7 @@ export type TFieldTextarea = {
   "[labelClass]"?: string;
   "[labelStyles]"?: string;
   "[class]"?: string;
-  "[fieldStyles]"?: string;
+  "[style]"?: string;
   "[placeholder]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
@@ -45,23 +47,26 @@ class FieldTextareaComponent extends MintScope {
   value: string;
   labelClass?: string;
   class: string;
-  fieldStyles?: string;
+  style?: string;
   placeholder?: string;
   required: boolean;
   readonly?: true;
   resize?: boolean;
   id?: string;
-  onInput: MintEvent | null;
 
   hasLabel: Resolver<boolean>;
   getStyles: Resolver<string>;
   getReadonly: Resolver<string | undefined>;
 
+  onInput: MintEvent | null;
+
+  ref?: UpwardRef<HTMLTextAreaElement>;
+
   constructor() {
     super();
 
     this.resize = false;
-    this.fieldStyles = "";
+    this.style = "";
     this.onInput = null;
 
     this.hasLabel = new Resolver(function () {
@@ -69,7 +74,7 @@ class FieldTextareaComponent extends MintScope {
     });
 
     this.getStyles = new Resolver(function () {
-      return this.resize ? "" : "resize: none;" + this.fieldStyles;
+      return (this.resize ? "" : "resize: none; ") + this.style;
     });
 
     this.getReadonly = new Resolver(function () {

@@ -16,7 +16,7 @@ export const FieldRadio = component(
     "[labelClass]": "labelClass",
     "[labelStyles]": "labelStyles",
     "[class]": "inputClass",
-    "[fieldStyles]": "fieldStyles",
+    "[style]": "style",
     "[required]": "required",
     "[readonly]": "readonly",
     "[onInput]": "onInput",

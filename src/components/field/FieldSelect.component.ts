@@ -18,7 +18,7 @@ export type TFieldSelect = {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
-  fieldStyles?: string;
+  style?: string;
   required?: true;
   readonly?: true;
   id?: string;
@@ -31,7 +31,7 @@ export type TFieldSelect = {
   "[labelClass]"?: string;
   "[labelStyles]"?: string;
   "[class]"?: string;
-  "[fieldStyles]"?: string;
+  "[style]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
   "[id]"?: string;
@@ -45,7 +45,7 @@ class FieldSelectComponent extends MintScope {
   name: string;
   label?: string;
   class: string;
-  fieldStyles?: string;
+  style?: string;
   required?: true;
   readonly?: string;
   id?: string;
@@ -57,7 +57,7 @@ class FieldSelectComponent extends MintScope {
   constructor() {
     super();
 
-    this.fieldStyles = "";
+    this.style = "";
     this.options = [];
     this.onInput = null;
 
@@ -79,7 +79,7 @@ export const FieldSelect = component(
         "[name]": "name",
         "[value]": "value",
         "[class]": "class",
-        "[style]": "fieldStyles",
+        "[style]": "style",
         "[required]": "required",
         "[readonly]": "readonly",
         "[id]": "id",

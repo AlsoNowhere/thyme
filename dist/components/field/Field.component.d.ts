@@ -1,4 +1,4 @@
-import { MintEvent } from "mint";
+import { MintEvent, UpwardRef } from "mint";
 import { FieldsetOption } from "../../models/FieldsetOption.model";
 import { IFieldOption } from "../../interfaces/IFieldOption.interface";
 import { TInputTypes } from "../../types/TInputTypes.type";
@@ -15,14 +15,15 @@ export type TField = {
     labelStyles?: string;
     placeholder?: string;
     class?: string;
+    style?: string;
     large?: boolean;
     wrapperClasses?: string;
-    fieldStyles?: string;
     required?: true;
     readonly?: true;
     id?: string;
     options?: Array<IFieldOption | FieldsetOption>;
     onInput?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+    ref?: UpwardRef<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
 } & {
     "[type]"?: string;
     "[name]"?: string;
@@ -35,9 +36,9 @@ export type TField = {
     "[labelStyles]"?: string;
     "[placeholder]"?: string;
     "[class]"?: string;
+    "[style]"?: string;
     "[large]"?: string;
     "[wrapperClasses]"?: string;
-    "[fieldStyles]"?: string;
     "[required]"?: string;
     "[readonly]"?: string;
     "[id]"?: string;

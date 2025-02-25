@@ -1,4 +1,4 @@
-import { MintEvent } from "mint";
+import { MintEvent, UpwardRef } from "mint";
 export type TFieldTextarea = {
     name?: string;
     value?: string | number;
@@ -6,13 +6,14 @@ export type TFieldTextarea = {
     labelClass?: string;
     labelStyles?: string;
     class?: string;
-    fieldStyles?: string;
+    style?: string;
     placeholder?: string;
     required?: true;
     readonly?: true;
     resize?: true;
     id?: string;
     onInput?: MintEvent;
+    ref?: UpwardRef<HTMLTextAreaElement>;
 } & {
     "[name]"?: string;
     "[value]"?: string;
@@ -20,7 +21,7 @@ export type TFieldTextarea = {
     "[labelClass]"?: string;
     "[labelStyles]"?: string;
     "[class]"?: string;
-    "[fieldStyles]"?: string;
+    "[style]"?: string;
     "[placeholder]"?: string;
     "[required]"?: string;
     "[readonly]"?: string;

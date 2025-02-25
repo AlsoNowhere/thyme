@@ -22,7 +22,7 @@ export const FieldCheckbox = component(
     "[labelClass]": "labelClass",
     "[class]": "inputClass",
     "[large]": "large",
-    "[fieldStyles]": "fieldStyles",
+    "[style]": "style",
     "[required]": "required",
     "[readonly]": "readonly",
     "[id]": "id",

@@ -1,4 +1,12 @@
-import { MintScope, MintEvent, component, node, Resolver, mIf } from "mint";
+import {
+  MintScope,
+  MintEvent,
+  component,
+  node,
+  Resolver,
+  mIf,
+  UpwardRef,
+} from "mint";
 
 import { FieldInput, TFieldInput } from "./FieldInput.component";
 import { FieldCheckbox, TFieldCheckbox } from "./FieldCheckbox.component";
@@ -28,8 +36,8 @@ const passProps: TFieldInput &
   "[labelClass]": "labelClass",
   "[labelStyles]": "labelStyles",
   "[class]": "class",
+  "[style]": "style",
   "[large]": "large",
-  "[fieldStyles]": "fieldStyles",
   "[required]": "required",
   "[readonly]": "readonly",
   "[id]": "id",
@@ -51,9 +59,9 @@ export type TField = {
   labelStyles?: string;
   placeholder?: string;
   class?: string;
+  style?: string;
   large?: boolean;
   wrapperClasses?: string;
-  fieldStyles?: string;
   required?: true;
   readonly?: true;
   id?: string;
@@ -61,6 +69,7 @@ export type TField = {
   onInput?: MintEvent<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;
+  ref?: UpwardRef<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
 } & {
   "[type]"?: string;
   "[name]"?: string;
@@ -73,9 +82,9 @@ export type TField = {
   "[labelStyles]"?: string;
   "[placeholder]"?: string;
   "[class]"?: string;
+  "[style]"?: string;
   "[large]"?: string;
   "[wrapperClasses]"?: string;
-  "[fieldStyles]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
   "[id]"?: string;
@@ -92,13 +101,15 @@ class FieldComponent extends MintScope {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
+  style?: string;
   large?: boolean;
-  fieldStyles?: string;
   required?: true;
   readonly?: true;
   id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
-  onInput?: MintEvent | null;
+  onInput?: MintEvent<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  > | null;
   ref?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
 
   isInput: Resolver<boolean>;
@@ -113,7 +124,7 @@ class FieldComponent extends MintScope {
 
     this.type = "text";
     this.class = "";
-    this.fieldStyles = undefined;
+    this.style = undefined;
     this.onInput = null;
     this.ref = null;
 
@@ -151,7 +162,7 @@ class FieldComponent extends MintScope {
 }
 
 export const Field = component(
-  "div",
+  "<>",
   FieldComponent,
   { "[class]": "wrapperClasses" },
   [

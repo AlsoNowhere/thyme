@@ -10,8 +10,8 @@ export type TFieldInput = {
     labelClass?: string;
     labelStyles?: string;
     class?: string;
+    style?: string;
     large?: boolean;
-    fieldStyles?: string;
     placeholder?: string;
     required?: true;
     readonly?: true;
@@ -27,8 +27,8 @@ export type TFieldInput = {
     "[labelClass]"?: string;
     "[labelStyles]"?: string;
     "[class]"?: string;
+    "[style]"?: string;
     "[large]"?: string;
-    "[fieldStyles]"?: string;
     "[placeholder]"?: string;
     "[required]"?: string;
     "[readonly]"?: string;

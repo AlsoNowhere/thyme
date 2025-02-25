@@ -43,16 +43,19 @@ const Button = component("button", ButtonComponent, {
     "(click)": "onClick",
     mRef: mRef("ref"),
 }, [
-    node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
-    node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
-    node("span", { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" }, node(template("getExtraButtonLabel"))),
+    node("<>", Object.assign({}, mIf("!_children")), [
+        node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
+        node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
+        node("span", { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" }, node(template("getExtraButtonLabel"))),
+    ]),
+    node("<>", Object.assign({}, mIf("_children")), "_children"),
 ]);
 
 class FieldInputComponent extends MintScope {
     constructor() {
         super();
         this.type = "text";
-        this.fieldStyles = "";
+        this.style = "";
         this.onInput = null;
         this._labelClass = new Resolver(function () {
             return this.labelClass + (this.large ? " large" : "");
@@ -79,10 +82,10 @@ const FieldInput = component("label", FieldInputComponent, { class: "{_labelClas
         "[value]": "value",
         "[checked]": "checked",
         "[class]": "_inputClass",
+        "[style]": "style",
         "[placeholder]": "placeholder",
         "[required]": "required",
         "[readonly]": "readonly",
-        "[style]": "fieldStyles",
         "[id]": "id",
         "(input)": "onInput",
         mRef: mRef("ref"),
@@ -100,7 +103,7 @@ const FieldCheckbox = component("div", null, null, node(FieldInput, {
     "[labelClass]": "labelClass",
     "[class]": "inputClass",
     "[large]": "large",
-    "[fieldStyles]": "fieldStyles",
+    "[style]": "style",
     "[required]": "required",
     "[readonly]": "readonly",
     "[id]": "id",
@@ -118,7 +121,7 @@ const FieldRadio = component("div", null, null, node(FieldInput, {
     "[labelClass]": "labelClass",
     "[labelStyles]": "labelStyles",
     "[class]": "inputClass",
-    "[fieldStyles]": "fieldStyles",
+    "[style]": "style",
     "[required]": "required",
     "[readonly]": "readonly",
     "[onInput]": "onInput",
@@ -128,7 +131,7 @@ const FieldRadio = component("div", null, null, node(FieldInput, {
 class FieldSelectComponent extends MintScope {
     constructor() {
         super();
-        this.fieldStyles = "";
+        this.style = "";
         this.options = [];
         this.onInput = null;
         this.hasLabel = new Resolver(function () {
@@ -142,7 +145,7 @@ const FieldSelect = component("label", FieldSelectComponent, { class: "{labelCla
         "[name]": "name",
         "[value]": "value",
         "[class]": "class",
-        "[style]": "fieldStyles",
+        "[style]": "style",
         "[required]": "required",
         "[readonly]": "readonly",
         "[id]": "id",
@@ -179,7 +182,7 @@ const FieldFieldset = component("fieldset", FieldFieldsetComponent, { "[id]": "i
         "[class]": "class",
         "[labelClass]": "labelClass",
         "[labelStyles]": "labelStyles",
-        "[fieldStyles]": "fieldStyles",
+        "[style]": "style",
         "[checked]": "isChecked",
         "[onInput]": "onInput",
     }))),
@@ -189,13 +192,13 @@ class FieldTextareaComponent extends MintScope {
     constructor() {
         super();
         this.resize = false;
-        this.fieldStyles = "";
+        this.style = "";
         this.onInput = null;
         this.hasLabel = new Resolver(function () {
             return !!this.label;
         });
         this.getStyles = new Resolver(function () {
-            return this.resize ? "" : "resize: none;" + this.fieldStyles;
+            return (this.resize ? "" : "resize: none; ") + this.style;
         });
         this.getReadonly = new Resolver(function () {
             return this.readonly ? "true" : undefined;
@@ -228,8 +231,8 @@ const passProps = {
     "[labelClass]": "labelClass",
     "[labelStyles]": "labelStyles",
     "[class]": "class",
+    "[style]": "style",
     "[large]": "large",
-    "[fieldStyles]": "fieldStyles",
     "[required]": "required",
     "[readonly]": "readonly",
     "[id]": "id",
@@ -241,7 +244,7 @@ class FieldComponent extends MintScope {
         super();
         this.type = "text";
         this.class = "";
-        this.fieldStyles = undefined;
+        this.style = undefined;
         this.onInput = null;
         this.ref = null;
         this.isInput = new Resolver(function () {
@@ -271,7 +274,7 @@ class FieldComponent extends MintScope {
         });
     }
 }
-const Field = component("div", FieldComponent, { "[class]": "wrapperClasses" }, [
+const Field = component("<>", FieldComponent, { "[class]": "wrapperClasses" }, [
     node(FieldInput, Object.assign({ mIf: mIf("isInput") }, passProps)),
     node(FieldCheckbox, Object.assign({ mIf: mIf("isCheckbox") }, passProps)),
     node(FieldRadio, Object.assign({ mIf: mIf("isRadio") }, passProps)),

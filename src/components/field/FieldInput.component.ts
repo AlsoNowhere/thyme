@@ -20,8 +20,8 @@ export type TFieldInput = {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
+  style?: string;
   large?: boolean;
-  fieldStyles?: string;
   placeholder?: string;
   required?: true;
   readonly?: true;
@@ -37,8 +37,8 @@ export type TFieldInput = {
   "[labelClass]"?: string;
   "[labelStyles]"?: string;
   "[class]"?: string;
+  "[style]"?: string;
   "[large]"?: string;
-  "[fieldStyles]"?: string;
   "[placeholder]"?: string;
   "[required]"?: string;
   "[readonly]"?: string;
@@ -56,8 +56,8 @@ class FieldInputComponent extends MintScope {
   labelClass?: string;
   labelStyles?: string;
   class?: string;
+  style?: string;
   large?: boolean;
-  fieldStyles?: string;
   placeholder?: string;
   required?: true;
   readonly?: string;
@@ -74,7 +74,7 @@ class FieldInputComponent extends MintScope {
     super();
 
     this.type = "text";
-    this.fieldStyles = "";
+    this.style = "";
     this.onInput = null;
 
     this._labelClass = new Resolver(function () {
@@ -111,10 +111,10 @@ export const FieldInput = component(
       "[value]": "value",
       "[checked]": "checked",
       "[class]": "_inputClass",
+      "[style]": "style",
       "[placeholder]": "placeholder",
       "[required]": "required",
       "[readonly]": "readonly",
-      "[style]": "fieldStyles",
       "[id]": "id",
       "(input)": "onInput",
       mRef: mRef("ref"),

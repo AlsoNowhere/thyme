@@ -68,7 +68,7 @@ export const FieldFieldset = component(
           "[class]": "class",
           "[labelClass]": "labelClass",
           "[labelStyles]": "labelStyles",
-          "[fieldStyles]": "fieldStyles",
+          "[style]": "style",
           "[checked]": "isChecked",
           "[onInput]": "onInput",
         })

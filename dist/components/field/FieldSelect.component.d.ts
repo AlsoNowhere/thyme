@@ -7,7 +7,7 @@ export type TFieldSelect = {
     labelClass?: string;
     labelStyles?: string;
     class?: string;
-    fieldStyles?: string;
+    style?: string;
     required?: true;
     readonly?: true;
     id?: string;
@@ -20,7 +20,7 @@ export type TFieldSelect = {
     "[labelClass]"?: string;
     "[labelStyles]"?: string;
     "[class]"?: string;
-    "[fieldStyles]"?: string;
+    "[style]"?: string;
     "[required]"?: string;
     "[readonly]"?: string;
     "[id]"?: string;

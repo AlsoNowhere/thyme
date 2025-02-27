@@ -1,4 +1,4 @@
-import { MintEvent } from "mint";
+import { MintEvent, TMintContent } from "mint";
 import { TThemes } from "../types/TThemes.type";
 type TTypes = "submit" | "button";
 export type TButton = {
@@ -8,6 +8,7 @@ export type TButton = {
     icon?: string;
     class?: string;
     style?: string;
+    content?: TMintContent;
     onClick?: MintEvent<HTMLButtonElement>;
     ref?: null;
 } & {
@@ -17,6 +18,7 @@ export type TButton = {
     "[icon]"?: string;
     "[class]"?: string;
     "[style]"?: string;
+    "[content]"?: string;
     "[onClick]"?: string;
     "[ref]"?: string;
 };

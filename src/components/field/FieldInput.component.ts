@@ -26,7 +26,10 @@ export type TFieldInput = {
   required?: true;
   readonly?: true;
   id?: string;
+  onKeyDown?: MintEvent;
   onInput?: MintEvent;
+  onFocus?: MintEvent;
+  onBlur?: MintEvent;
 } & {
   "[type]"?: string;
   "[name]"?: string;
@@ -43,7 +46,10 @@ export type TFieldInput = {
   "[required]"?: string;
   "[readonly]"?: string;
   "[id]"?: string;
+  "[onKeyDown]"?: string;
   "[onInput]"?: string;
+  "[onFocus]"?: string;
+  "[onBlur]"?: string;
   "[ref]"?: string;
 };
 
@@ -62,7 +68,10 @@ class FieldInputComponent extends MintScope {
   required?: true;
   readonly?: string;
   id?: string;
+  onKeyDown: MintEvent | null;
   onInput: MintEvent | null;
+  onFocus: MintEvent | null;
+  onBlur: MintEvent | null;
 
   _labelClass: Resolver<string>;
   _inputClass: Resolver<string>;
@@ -75,7 +84,10 @@ class FieldInputComponent extends MintScope {
 
     this.type = "text";
     this.style = "";
+    this.onKeyDown = null;
     this.onInput = null;
+    this.onFocus = null;
+    this.onBlur = null;
 
     this._labelClass = new Resolver(function () {
       return this.labelClass + (this.large ? " large" : "");
@@ -116,7 +128,10 @@ export const FieldInput = component(
       "[required]": "required",
       "[readonly]": "readonly",
       "[id]": "id",
+      "(keydown)": "onKeyDown",
       "(input)": "onInput",
+      "(focus)": "onFocus",
+      "(blur)": "onBlur",
       mRef: mRef("ref"),
     }),
     node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),

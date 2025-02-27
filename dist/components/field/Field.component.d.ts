@@ -22,7 +22,11 @@ export type TField = {
     readonly?: true;
     id?: string;
     options?: Array<IFieldOption | FieldsetOption>;
+    onKeyDown?: MintEvent<HTMLInputElement>;
     onInput?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+    onFocus?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+    onBlur?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+    extend?: Record<string, string>;
     ref?: UpwardRef<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
 } & {
     "[type]"?: string;
@@ -43,7 +47,10 @@ export type TField = {
     "[readonly]"?: string;
     "[id]"?: string;
     "[options]"?: string;
+    "[onKeyDown]"?: string;
     "[onInput]"?: string;
+    "[onFocus]"?: string;
+    "[onBlur]"?: string;
     "[ref]"?: string;
 };
 export declare const Field: import("mint").MintComponent;

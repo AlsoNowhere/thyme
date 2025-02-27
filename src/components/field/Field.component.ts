@@ -6,6 +6,7 @@ import {
   Resolver,
   mIf,
   UpwardRef,
+  mExtend,
 } from "mint";
 
 import { FieldInput, TFieldInput } from "./FieldInput.component";
@@ -41,7 +42,10 @@ const passProps: TFieldInput &
   "[required]": "required",
   "[readonly]": "readonly",
   "[id]": "id",
+  "[onKeyDown]": "onKeyDown",
   "[onInput]": "onInput",
+  "[onFocus]": "onFocus",
+  "[onBlur]": "onBlur",
   "[ref]": "ref",
 };
 
@@ -66,9 +70,17 @@ export type TField = {
   readonly?: true;
   id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
+  onKeyDown?: MintEvent<HTMLInputElement>;
   onInput?: MintEvent<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   >;
+  onFocus?: MintEvent<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >;
+  onBlur?: MintEvent<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  >;
+  extend?: Record<string, string>;
   ref?: UpwardRef<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
 } & {
   "[type]"?: string;
@@ -89,7 +101,10 @@ export type TField = {
   "[readonly]"?: string;
   "[id]"?: string;
   "[options]"?: string;
+  "[onKeyDown]"?: string;
   "[onInput]"?: string;
+  "[onFocus]"?: string;
+  "[onBlur]"?: string;
   "[ref]"?: string;
 };
 
@@ -107,9 +122,17 @@ class FieldComponent extends MintScope {
   readonly?: true;
   id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
+  onKeyDown?: MintEvent<HTMLInputElement> | null;
   onInput?: MintEvent<
     HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   > | null;
+  onFocus?: MintEvent<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  > | null;
+  onBlur?: MintEvent<
+    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  > | null;
+  extend?: Record<string, string>;
   ref?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
 
   isInput: Resolver<boolean>;
@@ -125,7 +148,11 @@ class FieldComponent extends MintScope {
     this.type = "text";
     this.class = "";
     this.style = undefined;
+    this.onKeyDown = null;
     this.onInput = null;
+    this.onFocus = null;
+    this.onBlur = null;
+    this.extend = {};
     this.ref = null;
 
     this.isInput = new Resolver(function () {
@@ -168,33 +195,39 @@ export const Field = component(
   [
     node<TFieldInput>(FieldInput, {
       mIf: mIf("isInput"),
+      mExtend: mExtend("extend"),
       ...passProps,
     }),
 
     node<TFieldCheckbox>(FieldCheckbox, {
       mIf: mIf("isCheckbox"),
+      mExtend: mExtend("extend"),
       ...passProps,
     }),
 
     node<TFieldInput>(FieldRadio, {
       mIf: mIf("isRadio"),
+      mExtend: mExtend("extend"),
       ...passProps,
     }),
 
     node(FieldFieldset, {
       mIf: mIf("isFieldSet"),
+      mExtend: mExtend("extend"),
       ...passProps,
       "[options]": "options",
     }),
 
     node<TFieldTextarea>(FieldTextarea, {
       mIf: mIf("isTextarea"),
+      mExtend: mExtend("extend"),
       ...passProps,
       "[resize]": "resize",
     }),
 
     node<TFieldSelect>(FieldSelect, {
       mIf: mIf("isSelect"),
+      mExtend: mExtend("extend"),
       ...passProps,
       "[options]": "options",
     }),

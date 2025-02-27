@@ -16,7 +16,10 @@ export type TFieldInput = {
     required?: true;
     readonly?: true;
     id?: string;
+    onKeyDown?: MintEvent;
     onInput?: MintEvent;
+    onFocus?: MintEvent;
+    onBlur?: MintEvent;
 } & {
     "[type]"?: string;
     "[name]"?: string;
@@ -33,7 +36,10 @@ export type TFieldInput = {
     "[required]"?: string;
     "[readonly]"?: string;
     "[id]"?: string;
+    "[onKeyDown]"?: string;
     "[onInput]"?: string;
+    "[onFocus]"?: string;
+    "[onBlur]"?: string;
     "[ref]"?: string;
 };
 export declare const FieldInput: import("mint").MintComponent;

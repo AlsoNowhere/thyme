@@ -1,4 +1,4 @@
-import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, refresh, Store } from 'mint';
+import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, mExtend, refresh, Store } from 'mint';
 
 class ButtonComponent extends MintScope {
     constructor() {
@@ -7,8 +7,8 @@ class ButtonComponent extends MintScope {
         this.theme = "snow";
         this.class = "";
         this.style = undefined;
+        this.content = undefined;
         this.id = undefined;
-        this.onClick = null;
         this.classes = new Resolver(function () {
             if (this.hasExtraButtonLabel)
                 return `${this.class} multi-content`;
@@ -32,6 +32,10 @@ class ButtonComponent extends MintScope {
         this.getExtraButtonLabel = function () {
             return this.extraButtonLabel;
         };
+        this.getContent = function () {
+            return this.content;
+        };
+        this.onClick = null;
     }
 }
 const Button = component("button", ButtonComponent, {
@@ -44,9 +48,12 @@ const Button = component("button", ButtonComponent, {
     mRef: mRef("ref"),
 }, [
     node("<>", Object.assign({}, mIf("!_children")), [
-        node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
-        node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
-        node("span", { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" }, node(template("getExtraButtonLabel"))),
+        node("<>", Object.assign({}, mIf("!content")), [
+            node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
+            node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
+            node("span", { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" }, node(template("getExtraButtonLabel"))),
+        ]),
+        node("<>", Object.assign({}, mIf("content")), node(template("getContent"))),
     ]),
     node("<>", Object.assign({}, mIf("_children")), "_children"),
 ]);
@@ -56,7 +63,10 @@ class FieldInputComponent extends MintScope {
         super();
         this.type = "text";
         this.style = "";
+        this.onKeyDown = null;
         this.onInput = null;
+        this.onFocus = null;
+        this.onBlur = null;
         this._labelClass = new Resolver(function () {
             return this.labelClass + (this.large ? " large" : "");
         });
@@ -87,7 +97,10 @@ const FieldInput = component("label", FieldInputComponent, { class: "{_labelClas
         "[required]": "required",
         "[readonly]": "readonly",
         "[id]": "id",
+        "(keydown)": "onKeyDown",
         "(input)": "onInput",
+        "(focus)": "onFocus",
+        "(blur)": "onBlur",
         mRef: mRef("ref"),
     }),
     node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
@@ -236,7 +249,10 @@ const passProps = {
     "[required]": "required",
     "[readonly]": "readonly",
     "[id]": "id",
+    "[onKeyDown]": "onKeyDown",
     "[onInput]": "onInput",
+    "[onFocus]": "onFocus",
+    "[onBlur]": "onBlur",
     "[ref]": "ref",
 };
 class FieldComponent extends MintScope {
@@ -245,7 +261,11 @@ class FieldComponent extends MintScope {
         this.type = "text";
         this.class = "";
         this.style = undefined;
+        this.onKeyDown = null;
         this.onInput = null;
+        this.onFocus = null;
+        this.onBlur = null;
+        this.extend = {};
         this.ref = null;
         this.isInput = new Resolver(function () {
             const inValidTypes = [
@@ -275,12 +295,12 @@ class FieldComponent extends MintScope {
     }
 }
 const Field = component("<>", FieldComponent, { "[class]": "wrapperClasses" }, [
-    node(FieldInput, Object.assign({ mIf: mIf("isInput") }, passProps)),
-    node(FieldCheckbox, Object.assign({ mIf: mIf("isCheckbox") }, passProps)),
-    node(FieldRadio, Object.assign({ mIf: mIf("isRadio") }, passProps)),
-    node(FieldFieldset, Object.assign(Object.assign({ mIf: mIf("isFieldSet") }, passProps), { "[options]": "options" })),
-    node(FieldTextarea, Object.assign(Object.assign({ mIf: mIf("isTextarea") }, passProps), { "[resize]": "resize" })),
-    node(FieldSelect, Object.assign(Object.assign({ mIf: mIf("isSelect") }, passProps), { "[options]": "options" })),
+    node(FieldInput, Object.assign({ mIf: mIf("isInput"), mExtend: mExtend("extend") }, passProps)),
+    node(FieldCheckbox, Object.assign({ mIf: mIf("isCheckbox"), mExtend: mExtend("extend") }, passProps)),
+    node(FieldRadio, Object.assign({ mIf: mIf("isRadio"), mExtend: mExtend("extend") }, passProps)),
+    node(FieldFieldset, Object.assign(Object.assign({ mIf: mIf("isFieldSet"), mExtend: mExtend("extend") }, passProps), { "[options]": "options" })),
+    node(FieldTextarea, Object.assign(Object.assign({ mIf: mIf("isTextarea"), mExtend: mExtend("extend") }, passProps), { "[resize]": "resize" })),
+    node(FieldSelect, Object.assign(Object.assign({ mIf: mIf("isSelect"), mExtend: mExtend("extend") }, passProps), { "[options]": "options" })),
 ]);
 
 const modalTime = 500;

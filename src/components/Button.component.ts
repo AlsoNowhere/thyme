@@ -21,6 +21,7 @@ export type TButton = {
   icon?: string;
   class?: string;
   style?: string;
+  content?: TMintContent;
   onClick?: MintEvent<HTMLButtonElement>;
   ref?: null;
 } & {
@@ -30,6 +31,7 @@ export type TButton = {
   "[icon]"?: string;
   "[class]"?: string;
   "[style]"?: string;
+  "[content]"?: string;
   "[onClick]"?: string;
   "[ref]"?: string;
 };
@@ -42,6 +44,7 @@ class ButtonComponent extends MintScope {
   title: string;
   class: string;
   style: string;
+  content: string;
   id?: undefined;
   square?: true;
   large?: true;
@@ -53,6 +56,7 @@ class ButtonComponent extends MintScope {
   hasExtraButtonLabel: Resolver<boolean>;
   getExtraButtonLabel: () => TMintContent;
   extraButtonLabel?: () => string;
+  getContent: () => TMintContent;
   onClick: (() => void) | null;
 
   constructor() {
@@ -62,8 +66,8 @@ class ButtonComponent extends MintScope {
     this.theme = "snow";
     this.class = "";
     this.style = undefined;
+    this.content = undefined;
     this.id = undefined;
-    this.onClick = null;
 
     this.classes = new Resolver(function () {
       if (this.hasExtraButtonLabel) return `${this.class} multi-content`;
@@ -95,6 +99,12 @@ class ButtonComponent extends MintScope {
     this.getExtraButtonLabel = function () {
       return this.extraButtonLabel;
     };
+
+    this.getContent = function () {
+      return this.content;
+    };
+
+    this.onClick = null;
   }
 }
 
@@ -112,13 +122,16 @@ export const Button = component(
   },
   [
     node("<>", { ...mIf("!_children") }, [
-      node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
-      node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
-      node(
-        "span",
-        { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" },
-        node(template("getExtraButtonLabel"))
-      ),
+      node("<>", { ...mIf("!content") }, [
+        node("span", { mIf: mIf("hasIcon"), class: "icon fa fa-{icon}" }),
+        node("span", { mIf: mIf("hasLabel"), class: "label" }, "{label}"),
+        node(
+          "span",
+          { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" },
+          node(template("getExtraButtonLabel"))
+        ),
+      ]),
+      node("<>", { ...mIf("content") }, node(template("getContent"))),
     ]),
     node("<>", { ...mIf("_children") }, "_children"),
   ]

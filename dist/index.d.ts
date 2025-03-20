@@ -1,4 +1,5 @@
 export { Button, TButton } from "./components/Button.component";
+export { ColourSelector } from "./components/ColourSelector.component";
 export { Field, TField } from "./components/field/Field.component";
 export { Modal, TModal } from "./components/Modal.component";
 export { Router, TRouter } from "./components/Router.component";

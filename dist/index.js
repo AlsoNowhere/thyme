@@ -1,4 +1,4 @@
-import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, mExtend, refresh, Store } from 'mint';
+import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, refresh, mExtend, Store } from 'mint';
 
 class ButtonComponent extends MintScope {
     constructor() {
@@ -56,6 +56,52 @@ const Button = component("button", ButtonComponent, {
         node("<>", Object.assign({}, mIf("content")), node(template("getContent"))),
     ]),
     node("<>", Object.assign({}, mIf("_children")), "_children"),
+]);
+
+class ColourSelectorComponent extends MintScope {
+    constructor() {
+        super();
+        this.onInput = null;
+        this.colourSelectorScope = this;
+        this.showColours = false;
+        this.colours = [
+            "black",
+            "green",
+            "lightgreen",
+            "blue",
+            "lightblue",
+            "grey",
+            "lightgrey",
+            "#444",
+            "pink",
+            "teal",
+            "aqua",
+            "red",
+            "tomato",
+            "purple",
+        ];
+        this.toggleShowColours = function () {
+            this.colourSelectorScope.showColours =
+                !this.colourSelectorScope.showColours;
+            refresh(this.colourSelectorScope);
+        };
+        this.chooseColour = function () {
+            var _a;
+            (_a = this.onInput) === null || _a === void 0 ? void 0 : _a.call(this, this._x);
+            this.colourSelectorScope.showColours = false;
+            refresh(this.colourSelectorScope);
+        };
+    }
+}
+const ColourSelector = component("div", ColourSelectorComponent, { class: "relative z-index" }, [
+    node(Button, {
+        "[large]": "large",
+        square: true,
+        content: node("span", null, "C"),
+        "[colourSelectorScope]": "colourSelectorScope",
+        "[onClick]": "toggleShowColours",
+    }),
+    node("ul", Object.assign(Object.assign({}, mIf("showColours")), { class: "list flex absolute left-gap", style: "top: 2rem; width: 100px;" }), node("li", Object.assign(Object.assign({}, mFor("colours")), { mKey: "_i", class: "width height snow-border pointer", style: "background-color: {_x};", "(click)": "chooseColour" }))),
 ]);
 
 class FieldInputComponent extends MintScope {
@@ -490,4 +536,4 @@ class Route {
     }
 }
 
-export { Button, Field, FieldsetOption, Modal, Route, RouteType, Router, Tab, Tabs, closeModal };
+export { Button, ColourSelector, Field, FieldsetOption, Modal, Route, RouteType, Router, Tab, Tabs, closeModal };

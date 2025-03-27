@@ -81,6 +81,7 @@ class ColourSelectorComponent extends MintScope {
             "purple",
         ];
         this.toggleShowColours = function () {
+            console.log("Click: ", this.colourSelectorScope.showColours);
             this.colourSelectorScope.showColours =
                 !this.colourSelectorScope.showColours;
             refresh(this.colourSelectorScope);
@@ -507,6 +508,18 @@ const Tabs = component("div", TabsComponent, { class: "tabs", mRef: mRef("ref") 
     node("div", { mIf: mIf("tabSelected"), class: "tabs__body" }, node(template({ onevery: true }, "currentTemplate"))),
 ]);
 
+class TableComponent extends MintScope {
+    constructor() {
+        super();
+        this.columns = [];
+        this.rows = [];
+    }
+}
+const Table = component("table", TableComponent, { class: "table" }, [
+    node("thead", null, node("tr", null, node("th", Object.assign(Object.assign({}, mFor("columns")), { mKey: "id" }), "{title}"))),
+    node("tbody", null, node("tr", Object.assign(Object.assign({}, mFor("rows")), { mKey: "id" }), node("td", Object.assign(Object.assign({}, mFor("columns")), { mKey: "id" }), "{cell}"))),
+]);
+
 class FieldsetOption {
     constructor({ value, label = value, classes, }) {
         this.value = value;
@@ -536,4 +549,24 @@ class Route {
     }
 }
 
-export { Button, ColourSelector, Field, FieldsetOption, Modal, Route, RouteType, Router, Tab, Tabs, closeModal };
+class TableColumn {
+    constructor(name, title = name, id = name) {
+        this.name = name;
+        this.title = title;
+        this.id = id;
+    }
+}
+
+class TableRow {
+    constructor(columns, ...args) {
+        this.columns = columns;
+        for (let [i, x] of columns.entries()) {
+            this[x.name] = args[i];
+        }
+        this.cell = function () {
+            return this[this.name];
+        };
+    }
+}
+
+export { Button, ColourSelector, Field, FieldsetOption, Modal, Route, RouteType, Router, Tab, Table, TableColumn, TableRow, Tabs, closeModal };

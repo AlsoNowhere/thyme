@@ -1,8 +1,9 @@
 {
   "name": "thyme",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "",
   "main": "./dist/index.js",
+  "sideEffects": false,
   "scripts": {
     "build:js": "rollup --config",
     "watch:js": "rollup --config --watch",

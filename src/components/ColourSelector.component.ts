@@ -37,7 +37,6 @@ class ColourSelectorComponent extends MintScope {
     ];
 
     this.toggleShowColours = function () {
-      console.log("Click: ", this.colourSelectorScope.showColours);
       this.colourSelectorScope.showColours =
         !this.colourSelectorScope.showColours;
       refresh(this.colourSelectorScope);

@@ -7,6 +7,7 @@ import {
   mIf,
   mRef,
   UpwardRef,
+  mExtend,
 } from "mint";
 
 export type TFieldTextarea = {
@@ -98,6 +99,7 @@ export const FieldTextarea = component(
       "[readonly]": "getReadonly",
       "[id]": "id",
       "(input)": "onInput",
+      ...mExtend("extendField"),
       mRef: mRef("ref"),
     }),
   ]

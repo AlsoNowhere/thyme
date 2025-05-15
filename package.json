@@ -1,6 +1,6 @@
 {
   "name": "thyme",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "",
   "main": "./dist/index.js",
   "sideEffects": false,
@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "mint": "file:../Mint3"
+    "mint": "file:../Mint"
   },
   "dependencies": {
     "@rollup/plugin-node-resolve": "^13.3.0",

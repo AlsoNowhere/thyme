@@ -6,6 +6,7 @@ import {
   Resolver,
   mIf,
   mRef,
+  mExtend,
 } from "mint";
 
 import { TInputTypes } from "../../types/TInputTypes.type";
@@ -26,10 +27,11 @@ export type TFieldInput = {
   required?: true;
   readonly?: true;
   id?: string;
-  onKeyDown?: MintEvent;
+  // onKeyDown?: MintEvent;
   onInput?: MintEvent;
-  onFocus?: MintEvent;
-  onBlur?: MintEvent;
+  // onFocus?: MintEvent;
+  // onBlur?: MintEvent;
+  extendField?: Record<string, string>;
 } & {
   "[type]"?: string;
   "[name]"?: string;
@@ -46,10 +48,11 @@ export type TFieldInput = {
   "[required]"?: string;
   "[readonly]"?: string;
   "[id]"?: string;
-  "[onKeyDown]"?: string;
+  // "[onKeyDown]"?: string;
   "[onInput]"?: string;
-  "[onFocus]"?: string;
-  "[onBlur]"?: string;
+  // "[onFocus]"?: string;
+  // "[onBlur]"?: string;
+  "[extendField]"?: "extendField";
   "[ref]"?: string;
 };
 
@@ -68,10 +71,12 @@ class FieldInputComponent extends MintScope {
   required?: true;
   readonly?: string;
   id?: string;
-  onKeyDown: MintEvent | null;
+  // onKeyDown: MintEvent | null;
   onInput: MintEvent | null;
-  onFocus: MintEvent | null;
-  onBlur: MintEvent | null;
+  // onFocus: MintEvent | null;
+  // onBlur: MintEvent | null;
+
+  extendField: Record<string, string>;
 
   _labelClass: Resolver<string>;
   _inputClass: Resolver<string>;
@@ -84,10 +89,12 @@ class FieldInputComponent extends MintScope {
 
     this.type = "text";
     this.style = "";
-    this.onKeyDown = null;
+    // this.onKeyDown = null;
     this.onInput = null;
-    this.onFocus = null;
-    this.onBlur = null;
+    // this.onFocus = null;
+    // this.onBlur = null;
+
+    this.extendField = {};
 
     this._labelClass = new Resolver(function () {
       return this.labelClass + (this.large ? " large" : "");
@@ -128,11 +135,12 @@ export const FieldInput = component(
       "[required]": "required",
       "[readonly]": "readonly",
       "[id]": "id",
-      "(keydown)": "onKeyDown",
+      // "(keydown)": "onKeyDown",
       "(input)": "onInput",
-      "(focus)": "onFocus",
-      "(blur)": "onBlur",
-      mRef: mRef("ref"),
+      // "(focus)": "onFocus",
+      // "(blur)": "onBlur",
+      ...mExtend("extendField"),
+      ...mRef("ref"),
     }),
     node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
   ]

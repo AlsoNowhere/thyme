@@ -1,13 +1,4 @@
-import {
-  MintScope,
-  MintEvent,
-  component,
-  node,
-  Resolver,
-  mIf,
-  mRef,
-  mExtend,
-} from "mint";
+import { MintScope, MintEvent, component, node, Resolver, mIf, mRef, mExtend } from "mint";
 
 import { TInputTypes } from "../../types/TInputTypes.type";
 
@@ -97,7 +88,7 @@ class FieldInputComponent extends MintScope {
     this.extendField = {};
 
     this._labelClass = new Resolver(function () {
-      return this.labelClass + (this.large ? " large" : "");
+      return (this.labelClass ?? "") + (this.large ? " large" : "");
     });
 
     this._inputClass = new Resolver(function () {
@@ -143,5 +134,5 @@ export const FieldInput = component(
       ...mRef("ref"),
     }),
     node("span", { mIf: mIf("hasLabelBeside") }, "{label}"),
-  ]
+  ],
 );

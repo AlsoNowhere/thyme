@@ -1,4 +1,4 @@
-import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, refresh, mExtend, Store } from 'mint';
+import { component, mRef, node, mIf, template, MintScope, Resolver, mFor, refresh, mExtend } from 'mint';
 
 class ButtonComponent extends MintScope {
     constructor() {
@@ -115,7 +115,8 @@ class FieldInputComponent extends MintScope {
         // this.onBlur = null;
         this.extendField = {};
         this._labelClass = new Resolver(function () {
-            return this.labelClass + (this.large ? " large" : "");
+            var _a;
+            return ((_a = this.labelClass) !== null && _a !== void 0 ? _a : "") + (this.large ? " large" : "");
         });
         this._inputClass = new Resolver(function () {
             return this.class + (this.large ? " large" : "");
@@ -328,42 +329,37 @@ const Field = component("<>", FieldComponent, { "[class]": "wrapperClasses" }, [
     node(FieldSelect, Object.assign(Object.assign(Object.assign({ mIf: mIf("isSelect") }, mExtend("extendScope")), passProps), { "[options]": "options" })),
 ]);
 
-const modalTime = 500;
-
-const closeModal = (target, prop) => {
-    target[prop] = "open closing";
-    refresh(target);
-    setTimeout(() => {
-        target[prop] = "";
-        refresh(target);
-    }, modalTime);
-};
-
 class ModalComponent extends MintScope {
     constructor() {
         super();
         this.state = "";
         this.theme = "smoke";
         this.class = "";
+        this.style = "";
         this.hasTitle = new Resolver(function () {
             return this.title !== undefined;
         });
         this.clickOnBackground = function () {
-            if (this.closeOnBackgroundClick !== true)
-                return;
-            if (this._store instanceof Store &&
-                typeof this.storeTarget === "string") {
-                closeModal(this._store, this.storeTarget);
+            if (this.closeOnBackgroundClick instanceof Function) {
+                this.closeOnBackgroundClick();
             }
-            else {
-                closeModal(this, "state");
+            // if (!(this.closeOnBackgroundClick instanceof Function)) return;
+            // if (this._store instanceof Store && typeof this.storeTarget === "string") {
+            //   closeModal(this._store, this.storeTarget);
+            // } else {
+            //   closeModal(this, "state");
+            // }
+        };
+        this.clickOnContent = function (event) {
+            if (this.closeOnBackgroundClick instanceof Function) {
+                event.stopPropagation();
             }
         };
     }
 }
-const Modal = component("article", ModalComponent, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}" }, [
+const Modal = component("article", ModalComponent, { class: "modal {state}", "(click)": "clickOnBackground" }, node("div", { class: "modal__content {class}", "[style]": "style", "(click)": "clickOnContent" }, [
     node("header", { mIf: mIf("hasTitle"), class: "modal__header {theme}" }, node("h2", null, "{title}")),
-    "_children",
+    "_children"
 ]));
 
 const exact = (target, hash) => {
@@ -497,6 +493,17 @@ const Table = component("table", TableComponent, { class: "table" }, [
     node("thead", null, node("tr", null, node("th", Object.assign(Object.assign({}, mFor("columns")), { mKey: "id" }), "{title}"))),
     node("tbody", null, node("tr", Object.assign(Object.assign({}, mFor("rows")), { mKey: "id" }), node("td", Object.assign(Object.assign({}, mFor("columns")), { mKey: "id" }), "{cell}"))),
 ]);
+
+const modalTime = 500;
+
+const closeModal = (target, prop) => {
+    target[prop] = "open closing";
+    refresh(target);
+    setTimeout(() => {
+        target[prop] = "";
+        refresh(target);
+    }, modalTime);
+};
 
 class FieldsetOption {
     constructor({ value, label = value, classes, }) {

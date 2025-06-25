@@ -20,3 +20,4 @@ export { IRoute } from "./interfaces/IRoute.interface";
 export { RouteType } from "./enums/RouteType.enum";
 
 export { TThemes } from "./types/TThemes.type";
+export { TModalState } from "./types/TModalState.type";

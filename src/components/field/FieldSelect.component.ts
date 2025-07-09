@@ -1,13 +1,4 @@
-import {
-  MintScope,
-  MintEvent,
-  component,
-  node,
-  Resolver,
-  mIf,
-  mFor,
-  mRef,
-} from "mint";
+import { MintScope, MintEvent, component, node, Resolver, mIf, mFor, mRef } from "mint";
 
 import { IFieldOption } from "../../interfaces/IFieldOption.interface";
 
@@ -57,6 +48,7 @@ class FieldSelectComponent extends MintScope {
   constructor() {
     super();
 
+    this.class = "";
     this.style = "";
     this.options = [];
     this.onInput = null;
@@ -67,36 +59,31 @@ class FieldSelectComponent extends MintScope {
   }
 }
 
-export const FieldSelect = component(
-  "label",
-  FieldSelectComponent,
-  { class: "{labelClass} {isRequired}" },
-  [
-    node("span", { mIf: mIf("hasLabel") }, "{label}"),
-    node(
-      "select",
-      {
-        "[name]": "name",
-        "[value]": "value",
-        "[class]": "class",
-        "[style]": "style",
-        "[required]": "required",
-        "[readonly]": "readonly",
-        "[id]": "id",
-        "(input)": "onInput",
-        mRef: mRef("ref"),
-      },
-      [
-        node(
-          "option",
-          {
-            mFor: mFor("options"),
-            mKey: "value",
-            "[value]": "value",
-          },
-          "{name}"
-        ),
-      ]
-    ),
-  ]
-);
+export const FieldSelect = component("label", FieldSelectComponent, { class: "{labelClass} {isRequired}" }, [
+  node("span", { mIf: mIf("hasLabel") }, "{label}"),
+  node(
+    "select",
+    {
+      "[name]": "name",
+      "[value]": "value",
+      "[class]": "class",
+      "[style]": "style",
+      "[required]": "required",
+      "[readonly]": "readonly",
+      "[id]": "id",
+      "(input)": "onInput",
+      mRef: mRef("ref"),
+    },
+    [
+      node(
+        "option",
+        {
+          mFor: mFor("options"),
+          mKey: "value",
+          "[value]": "value",
+        },
+        "{name}",
+      ),
+    ],
+  ),
+]);

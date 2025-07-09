@@ -1,14 +1,4 @@
-import {
-  MintScope,
-  MintEvent,
-  component,
-  node,
-  Resolver,
-  mIf,
-  mRef,
-  UpwardRef,
-  mExtend,
-} from "mint";
+import { MintScope, MintEvent, component, node, Resolver, mIf, mRef, UpwardRef, mExtend } from "mint";
 
 export type TFieldTextarea = {
   name?: string;
@@ -66,8 +56,9 @@ class FieldTextareaComponent extends MintScope {
   constructor() {
     super();
 
-    this.resize = false;
+    this.class = "";
     this.style = "";
+    this.resize = false;
     this.onInput = null;
 
     this.hasLabel = new Resolver(function () {
@@ -84,23 +75,18 @@ class FieldTextareaComponent extends MintScope {
   }
 }
 
-export const FieldTextarea = component(
-  "label",
-  FieldTextareaComponent,
-  { class: "{labelClass} {isRequired}" },
-  [
-    node("span", { mIf: mIf("hasLabel") }, "{label}"),
-    node("textarea", {
-      "[name]": "name",
-      "[value]": "value",
-      "[class]": "class",
-      "[placeholder]": "placeholder",
-      "[style]": "getStyles",
-      "[readonly]": "getReadonly",
-      "[id]": "id",
-      "(input)": "onInput",
-      ...mExtend("extendField"),
-      mRef: mRef("ref"),
-    }),
-  ]
-);
+export const FieldTextarea = component("label", FieldTextareaComponent, { class: "{labelClass} {isRequired}" }, [
+  node("span", { mIf: mIf("hasLabel") }, "{label}"),
+  node("textarea", {
+    "[name]": "name",
+    "[value]": "value",
+    "[class]": "class",
+    "[placeholder]": "placeholder",
+    "[style]": "getStyles",
+    "[readonly]": "getReadonly",
+    "[id]": "id",
+    "(input)": "onInput",
+    ...mExtend("extendField"),
+    mRef: mRef("ref"),
+  }),
+]);

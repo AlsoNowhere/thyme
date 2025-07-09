@@ -108,6 +108,7 @@ class FieldInputComponent extends MintScope {
     constructor() {
         super();
         this.type = "text";
+        this.class = "";
         this.style = "";
         // this.onKeyDown = null;
         this.onInput = null;
@@ -178,6 +179,7 @@ const FieldRadio = component("div", null, null, node(FieldInput, {
 class FieldSelectComponent extends MintScope {
     constructor() {
         super();
+        this.class = "";
         this.style = "";
         this.options = [];
         this.onInput = null;
@@ -238,8 +240,9 @@ const FieldFieldset = component("fieldset", FieldFieldsetComponent, { "[id]": "i
 class FieldTextareaComponent extends MintScope {
     constructor() {
         super();
-        this.resize = false;
+        this.class = "";
         this.style = "";
+        this.resize = false;
         this.onInput = null;
         this.hasLabel = new Resolver(function () {
             return !!this.label;

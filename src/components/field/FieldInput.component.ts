@@ -79,6 +79,7 @@ class FieldInputComponent extends MintScope {
     super();
 
     this.type = "text";
+    this.class = "";
     this.style = "";
     // this.onKeyDown = null;
     this.onInput = null;

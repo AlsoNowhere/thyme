@@ -1,14 +1,4 @@
-import {
-  MintScope,
-  MintEvent,
-  component,
-  node,
-  Resolver,
-  template,
-  mIf,
-  TMintContent,
-  mRef,
-} from "mint";
+import { MintScope, MintEvent, component, node, Resolver, template, mIf, TMintContent, mRef } from "mint";
 
 import { TThemes } from "../types/TThemes.type";
 
@@ -51,8 +41,8 @@ class ButtonComponent extends MintScope {
   classes: Resolver<string>;
   hasIcon: Resolver<boolean>;
   hasLabel: Resolver<boolean>;
-  isSquare: Resolver<string>;
-  isLarge: Resolver<string>;
+  squareClass: Resolver<string>;
+  largeClass: Resolver<string>;
   hasExtraButtonLabel: Resolver<boolean>;
   getExtraButtonLabel: () => TMintContent;
   extraButtonLabel?: () => string;
@@ -82,18 +72,16 @@ class ButtonComponent extends MintScope {
       return this.label !== undefined;
     });
 
-    this.isSquare = new Resolver(function () {
+    this.squareClass = new Resolver(function () {
       return this.square ? "square" : "";
     });
 
-    this.isLarge = new Resolver(function () {
+    this.largeClass = new Resolver(function () {
       return this.large ? "large" : "";
     });
 
     this.hasExtraButtonLabel = new Resolver(function () {
-      return (
-        this.extraButtonLabel !== null && this.extraButtonLabel !== undefined
-      );
+      return this.extraButtonLabel !== null && this.extraButtonLabel !== undefined;
     });
 
     this.getExtraButtonLabel = function () {
@@ -113,7 +101,7 @@ export const Button = component(
   ButtonComponent,
   {
     "[type]": "type",
-    class: "{theme} {classes} {isSquare} {isLarge}",
+    class: "{theme} {classes} {squareClass} {largeClass}",
     "[style]": "style",
     "[title]": "title",
     "[id]": "id",
@@ -128,11 +116,11 @@ export const Button = component(
         node(
           "span",
           { mIf: mIf("hasExtraButtonLabel"), class: "extra-content" },
-          node(template("getExtraButtonLabel"))
+          node(template("getExtraButtonLabel")),
         ),
       ]),
       node("<>", { ...mIf("content") }, node(template("getContent"))),
     ]),
     node("<>", { ...mIf("_children") }, "_children"),
-  ]
+  ],
 );

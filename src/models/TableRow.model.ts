@@ -4,7 +4,7 @@ export class TableRow {
   columns: Array<TableColumn>;
   cell: () => string;
 
-  constructor(columns, ...args) {
+  constructor(columns: Array<TableColumn>, ...args) {
     this.columns = columns;
 
     for (let [i, x] of columns.entries()) {

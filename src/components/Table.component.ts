@@ -16,18 +16,10 @@ class TableComponent extends MintScope {
 }
 
 export const Table = component("table", TableComponent, { class: "table" }, [
-  node(
-    "thead",
-    null,
-    node("tr", null, node("th", { ...mFor("columns"), mKey: "id" }, "{title}"))
-  ),
+  node("thead", null, node("tr", null, node("th", { ...mFor("columns"), mKey: "id" }, "{title}"))),
   node(
     "tbody",
     null,
-    node(
-      "tr",
-      { ...mFor("rows"), mKey: "id" },
-      node("td", { ...mFor("columns"), mKey: "id" }, "{cell}")
-    )
+    node("tr", { ...mFor("rows"), mKey: "id" }, node("td", { ...mFor("columns"), mKey: "id" }, "{cell}")),
   ),
 ]);

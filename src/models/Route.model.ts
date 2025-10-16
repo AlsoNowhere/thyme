@@ -11,13 +11,12 @@ type TOptions = {
 
 export class Route implements IRoute {
   target: string;
-  type: RouteType;
+  type?: RouteType;
   content: TMintContent;
 
   constructor(targetOrOptions: string | TOptions, content: TMintContent) {
     if (typeof targetOrOptions === "string") {
       this.target = targetOrOptions;
-      this.type = RouteType.exact;
     } else {
       this.target = targetOrOptions.target;
       this.type = targetOrOptions.type;

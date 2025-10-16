@@ -1,13 +1,4 @@
-import {
-  MintScope,
-  MintEvent,
-  component,
-  node,
-  Resolver,
-  mIf,
-  UpwardRef,
-  mExtend,
-} from "mint";
+import { MintScope, MintEvent, component, node, Resolver, mIf, UpwardRef, mExtend } from "mint";
 
 import { FieldInput, TFieldInput } from "./FieldInput.component";
 import { FieldCheckbox, TFieldCheckbox } from "./FieldCheckbox.component";
@@ -22,11 +13,7 @@ import { IFieldOption } from "../../interfaces/IFieldOption.interface";
 
 import { TInputTypes } from "../../types/TInputTypes.type";
 
-const passProps: TFieldInput &
-  TFieldTextarea &
-  TFieldSelect &
-  TFieldset &
-  TFieldCheckbox = {
+const passProps: TFieldInput & TFieldTextarea & TFieldSelect & TFieldset & TFieldCheckbox = {
   "[type]": "type",
   "[name]": "name",
   "[value]": "value",
@@ -36,6 +23,7 @@ const passProps: TFieldInput &
   "[labelBeside]": "labelBeside",
   "[labelClass]": "labelClass",
   "[labelStyles]": "labelStyles",
+  "[placeholder]": "placeholder",
   "[class]": "class",
   "[style]": "style",
   "[large]": "large",
@@ -72,9 +60,7 @@ export type TField = {
   id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
   // onKeyDown?: MintEvent<HTMLInputElement>;
-  onInput?: MintEvent<
-    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-  >;
+  onInput?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
   // onFocus?: MintEvent<
   //   HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   // >;
@@ -127,15 +113,9 @@ class FieldComponent extends MintScope {
   id?: string;
   options?: Array<IFieldOption | FieldsetOption>;
   onKeyDown?: MintEvent<HTMLInputElement> | null;
-  onInput?: MintEvent<
-    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-  > | null;
-  onFocus?: MintEvent<
-    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-  > | null;
-  onBlur?: MintEvent<
-    HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-  > | null;
+  onInput?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | null;
+  onFocus?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | null;
+  onBlur?: MintEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | null;
   extendScope?: Record<string, string>;
   extendField?: Record<string, string>;
   ref?: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
@@ -162,13 +142,7 @@ class FieldComponent extends MintScope {
     this.ref = null;
 
     this.isInput = new Resolver(function () {
-      const inValidTypes = [
-        "textarea",
-        "select",
-        "checkbox",
-        "radio",
-        "fieldset",
-      ];
+      const inValidTypes = ["textarea", "select", "checkbox", "radio", "fieldset"];
       return !inValidTypes.includes(this.type);
     });
 
@@ -194,48 +168,43 @@ class FieldComponent extends MintScope {
   }
 }
 
-export const Field = component(
-  "<>",
-  FieldComponent,
-  { "[class]": "wrapperClasses" },
-  [
-    node<TFieldInput>(FieldInput, {
-      mIf: mIf("isInput"),
-      ...mExtend("extendScope"),
-      ...passProps,
-    }),
+export const Field = component("<>", FieldComponent, { "[class]": "wrapperClasses" }, [
+  node<TFieldInput>(FieldInput, {
+    mIf: mIf("isInput"),
+    ...mExtend("extendScope"),
+    ...passProps,
+  }),
 
-    node<TFieldCheckbox>(FieldCheckbox, {
-      mIf: mIf("isCheckbox"),
-      ...mExtend("extendScope"),
-      ...passProps,
-    }),
+  node<TFieldCheckbox>(FieldCheckbox, {
+    mIf: mIf("isCheckbox"),
+    ...mExtend("extendScope"),
+    ...passProps,
+  }),
 
-    node<TFieldInput>(FieldRadio, {
-      mIf: mIf("isRadio"),
-      ...mExtend("extendScope"),
-      ...passProps,
-    }),
+  node<TFieldInput>(FieldRadio, {
+    mIf: mIf("isRadio"),
+    ...mExtend("extendScope"),
+    ...passProps,
+  }),
 
-    node(FieldFieldset, {
-      mIf: mIf("isFieldSet"),
-      ...mExtend("extendScope"),
-      ...passProps,
-      "[options]": "options",
-    }),
+  node(FieldFieldset, {
+    mIf: mIf("isFieldSet"),
+    ...mExtend("extendScope"),
+    ...passProps,
+    "[options]": "options",
+  }),
 
-    node<TFieldTextarea>(FieldTextarea, {
-      mIf: mIf("isTextarea"),
-      ...mExtend("extendScope"),
-      ...passProps,
-      "[resize]": "resize",
-    }),
+  node<TFieldTextarea>(FieldTextarea, {
+    mIf: mIf("isTextarea"),
+    ...mExtend("extendScope"),
+    ...passProps,
+    "[resize]": "resize",
+  }),
 
-    node<TFieldSelect>(FieldSelect, {
-      mIf: mIf("isSelect"),
-      ...mExtend("extendScope"),
-      ...passProps,
-      "[options]": "options",
-    }),
-  ]
-);
+  node<TFieldSelect>(FieldSelect, {
+    mIf: mIf("isSelect"),
+    ...mExtend("extendScope"),
+    ...passProps,
+    "[options]": "options",
+  }),
+]);

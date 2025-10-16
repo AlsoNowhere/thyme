@@ -1,19 +1,10 @@
 import { component, MintScope, node, template, TMintContent } from "mint";
 
-import {
-  contains,
-  containsAndHyphen,
-  ends,
-  exact,
-  hasWord,
-  starts,
-} from "../logic/router.logic";
+import { baseLogic, contains, containsAndHyphen, ends, exact, hasWord, starts } from "../logic/router.logic";
 
 import { IRoute } from "../interfaces/IRoute.interface";
 
 import { RouteType } from "../enums/RouteType.enum";
-
-// import { Route } from "../models/Route.model";
 
 export type TRouter = {
   routes: Array<IRoute>;
@@ -61,13 +52,18 @@ class RouterComponent extends MintScope {
       const routes = (this as RouterComponent).routes;
       const hash = window.location.hash.replace("#", "").replace(/%20/g, " ");
 
-      {
-        let i = 0;
-        while (i < routes.length) {
-          const route = routes[i];
+      let content;
 
+      for (let route of routes) {
+        // ** If there is a type defined then run the logic associated with that.
+        if (route.type !== undefined) {
           if (logic[route.type](route.target, hash)) return route.content;
-          i++;
+        }
+
+        // ** If there is no type then use base logic.
+        else {
+          content = baseLogic(route, hash);
+          if (content !== undefined) return content;
         }
       }
 
@@ -75,6 +71,5 @@ class RouterComponent extends MintScope {
     };
   }
 }
-export const Router = component("<>", RouterComponent, {}, [
-  node(template("router")),
-]);
+
+export const Router = component("<>", RouterComponent, {}, [node(template("router"))]);

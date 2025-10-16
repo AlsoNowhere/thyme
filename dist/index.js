@@ -20,14 +20,14 @@ class ButtonComponent extends MintScope {
         this.hasLabel = new Resolver(function () {
             return this.label !== undefined;
         });
-        this.isSquare = new Resolver(function () {
+        this.squareClass = new Resolver(function () {
             return this.square ? "square" : "";
         });
-        this.isLarge = new Resolver(function () {
+        this.largeClass = new Resolver(function () {
             return this.large ? "large" : "";
         });
         this.hasExtraButtonLabel = new Resolver(function () {
-            return (this.extraButtonLabel !== null && this.extraButtonLabel !== undefined);
+            return this.extraButtonLabel !== null && this.extraButtonLabel !== undefined;
         });
         this.getExtraButtonLabel = function () {
             return this.extraButtonLabel;
@@ -40,7 +40,7 @@ class ButtonComponent extends MintScope {
 }
 const Button = component("button", ButtonComponent, {
     "[type]": "type",
-    class: "{theme} {classes} {isSquare} {isLarge}",
+    class: "{theme} {classes} {squareClass} {largeClass}",
     "[style]": "style",
     "[title]": "title",
     "[id]": "id",
@@ -270,6 +270,7 @@ const passProps = {
     "[labelBeside]": "labelBeside",
     "[labelClass]": "labelClass",
     "[labelStyles]": "labelStyles",
+    "[placeholder]": "placeholder",
     "[class]": "class",
     "[style]": "style",
     "[large]": "large",
@@ -297,13 +298,7 @@ class FieldComponent extends MintScope {
         this.extendField = {};
         this.ref = null;
         this.isInput = new Resolver(function () {
-            const inValidTypes = [
-                "textarea",
-                "select",
-                "checkbox",
-                "radio",
-                "fieldset",
-            ];
+            const inValidTypes = ["textarea", "select", "checkbox", "radio", "fieldset"];
             return !inValidTypes.includes(this.type);
         });
         this.isCheckbox = new Resolver(function () {
@@ -372,10 +367,7 @@ const contains = (target, hash) => {
     return hash.includes(target);
 };
 const hasWord = (target, hash) => {
-    return (hash.includes(` ${hash} `) ||
-        exact(target, hash) ||
-        starts(target + " ", hash) ||
-        ends(" " + target, hash));
+    return hash.includes(` ${hash} `) || exact(target, hash) || starts(target + " ", hash) || ends(" " + target, hash);
 };
 const containsAndHyphen = (target, hash) => {
     return target === hash || hash.includes(target + "-");
@@ -385,6 +377,25 @@ const starts = (target, hash) => {
 };
 const ends = (target, hash) => {
     return hash.slice(hash.length - target.length) === target;
+};
+const baseLogic = (route, hash) => {
+    if (hash.includes("/")) {
+        const hashParts = hash.split("/");
+        const routeParts = route.target.split("/");
+        if (routeParts.length !== hashParts.length)
+            return;
+        let doesMatch = true;
+        for (let [i, routePart] of routeParts.entries()) {
+            const part = hashParts[i];
+            if (routePart.at(0) === "{" && routePart.at(-1) === "}") {
+                return;
+            }
+            if (routePart !== part)
+                doesMatch = false;
+        }
+        if (doesMatch)
+            return route.content;
+    }
 };
 
 var RouteType;
@@ -428,22 +439,25 @@ class RouterComponent extends MintScope {
         this.router = function () {
             const routes = this.routes;
             const hash = window.location.hash.replace("#", "").replace(/%20/g, " ");
-            {
-                let i = 0;
-                while (i < routes.length) {
-                    const route = routes[i];
+            let content;
+            for (let route of routes) {
+                // ** If there is a type defined then run the logic associated with that.
+                if (route.type !== undefined) {
                     if (logic[route.type](route.target, hash))
                         return route.content;
-                    i++;
+                }
+                // ** If there is no type then use base logic.
+                else {
+                    content = baseLogic(route, hash);
+                    if (content !== undefined)
+                        return content;
                 }
             }
             return [];
         };
     }
 }
-const Router = component("<>", RouterComponent, {}, [
-    node(template("router")),
-]);
+const Router = component("<>", RouterComponent, {}, [node(template("router"))]);
 
 class TabsComponent extends MintScope {
     constructor() {
@@ -527,7 +541,6 @@ class Route {
     constructor(targetOrOptions, content) {
         if (typeof targetOrOptions === "string") {
             this.target = targetOrOptions;
-            this.type = RouteType.exact;
         }
         else {
             this.target = targetOrOptions.target;

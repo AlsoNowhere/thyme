@@ -7,7 +7,7 @@ type TOptions = {
 };
 export declare class Route implements IRoute {
     target: string;
-    type: RouteType;
+    type?: RouteType;
     content: TMintContent;
     constructor(targetOrOptions: string | TOptions, content: TMintContent);
 }
